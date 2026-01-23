@@ -1,0 +1,47 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background:#ecf0fad2;
+    color: #000000;
+    font-family: system-ui;
+}
+.all{
+width: 80%;
+margin: auto; 
+}
+.head{
+    width: 70%;
+    text-align: center;
+    margin: 20px auto;
+
+}
+.features{
+    text-align: center;
+    width: 100%;
+    margin: 10px 0px;
+     padding: 20px;
+   
+}
+
+.features div{
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.features
+{
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+.features img{
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+}
+
+
