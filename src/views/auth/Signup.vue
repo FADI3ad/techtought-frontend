@@ -71,6 +71,13 @@
           </p>
         </div>
       </form>
+      <div class="logo">
+      <ul>
+        <li><img src="C:\Users\WiN_11\OneDrive\Desktop\techtought-frontend\twi.jpg"></li>
+        <li><img src="C:\Users\WiN_11\OneDrive\Desktop\techtought-frontend\img.jpg"></li>
+        <li><img src="C:\Users\WiN_11\OneDrive\Desktop\techtought-frontend\tel.jpg"></li>
+     </ul>
+    </div>
     </div>
   </div>
 </template>
@@ -390,5 +397,19 @@
   .signin-right {
     padding: 30px;
   }
+}
+.logo{
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    padding: 130px;
+}
+.logo li{
+    list-style: none;
+}
+.logo ul{
+    display: flex;
+    gap: 20px;
 }
 </style>
