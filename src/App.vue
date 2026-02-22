@@ -3,6 +3,7 @@
 </script>
 
 <template>
+<div class="page-container">
 <header class="header">
 
   <div class="header-top">
@@ -153,7 +154,6 @@
 </section>
 
 
-
 <section class="courses-section">
   <h2>All Web Development</h2>
   <p class="subtitle">We know the best things for you. Top picks for you.</p>
@@ -243,7 +243,7 @@
   </div>
 
 </section>
-
+</div>
 </template>
 
 <style scoped>
