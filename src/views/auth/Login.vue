@@ -1,67 +1,94 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
   <div class="sign">
+    <!-- Left Side -->
     <div class="signin">
-      <div class="stars"></div>
-      <h2 class="signin-left">Sign up for TechTought</h2>
-      <p>Explore TechTought core features for individuals and organizations.</p>
+      <div class="inner left-inner">
+        <div class="stars"></div>
+        <h2 class="signin-left">Sign up for TechTought</h2>
+        <p>
+          Explore TechTought core features for individuals and organizations.
+        </p>
+      </div>
     </div>
 
+    <!-- Right Side -->
     <div class="signin-right">
-      <h4 class="already-have-account">
-       Don't have an account? <a href="">Sign up →</a>
-      </h4>
-      <h2 class="sig">Sign up for TechTought</h2>
+      <div class="inner right-inner">
+        <h4 class="already-have-account">
+          Don't have an account?
+          <router-link to="/signup">Sign up →</router-link>
+        </h4>
 
-      <form class="form-container">
-       
-        <div class="form-group">
-          <label>Email*</label>
-          <input type="email" placeholder="Your work email" />
-        </div>
+        <h2 class="sig">Sign up for TechTought</h2>
 
-        <div class="form-group">
-          <label>Password*</label>
-          <input
-            type="password"
-            placeholder="Must be at least 8 characters."
-          />
-        </div>
-        
-        <div class="checkbox-group">
-          <h5>Email preferences</h5>
-          <label class="checkbox-label">
-            <input type="checkbox" name="subscribe" value="newsletter" />
-            Receive occasional product updates and announcements.
-          </label>
-        </div>
+        <form class="form-container">
+          <div class="form-group">
+            <label>Email*</label>
+            <input type="email" placeholder="Your work email" />
+          </div>
 
-        <button type="submit" class="submit-btn">Login</button>
+          <div class="form-group">
+            <label>Password*</label>
+            <input
+              type="password"
+              placeholder="Must be at least 8 characters." />
+          </div>
 
-        <div class="terms">
-          <p>
-            By creating an account, you agree to the
-            <a href="">Terms of Service.</a> For more information about
-            GitHub's privacy practices, see the
-            <a href="">GitHub Privacy Statement</a>. We'll occasionally send
-            you account-related emails.
-          </p>
-        </div>
-      </form>
-      <div class="logo">
-      <ul>
-        <li><img src="C:\Users\WiN_11\OneDrive\Desktop\techtought-frontend\twi.jpg"></li>
-        <li><img src="C:\Users\WiN_11\OneDrive\Desktop\techtought-frontend\img.jpg"></li>
-        <li><img src="C:\Users\WiN_11\OneDrive\Desktop\techtought-frontend\tel.jpg"></li>
-     </ul>
-    </div>
+          <div class="checkbox-group">
+            <h5>Email preferences</h5>
+            <label class="checkbox-label">
+              <input type="checkbox" />
+              Receive occasional product updates and announcements.
+            </label>
+          </div>
+
+          <button type="submit" class="submit-btn">Login</button>
+
+          <div class="terms">
+            <p>
+              By creating an account, you agree to the
+              <a href="">Terms of Service</a> and <a href="">Privacy Policy</a>.
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
-
 <style scoped>
+/* ===== Layout Structure ===== */
+
+.sign {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  width: 100%;
+}
+
+
+.signin,
+.signin-right {
+  width: 100%;
+}
+
+
+.inner {
+  width: 100%;
+  max-width: 670px; 
+  margin: 0 auto;
+}
+
+
+.left-inner {
+  padding: 80px 40px;
+  position: relative;
+}
+
+.right-inner {
+  padding: 40px 40px;
+}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -71,14 +98,14 @@
 .sign {
   display: flex;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 .signin {
   background: radial-gradient(
     circle at bottom,
-    #61DAFB -150%,
+    #61dafb -150%,
     #020103 70%,
     #020103 10%
   );
@@ -101,13 +128,13 @@
 
 .stars::before,
 .stars::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 2px;
   height: 2px;
   background: white;
   border-radius: 50%;
-  box-shadow: 
+  box-shadow:
     20px 40px 0 0 white,
     80px 100px 0 0 white,
     150px 60px 0 0 white,
@@ -144,7 +171,7 @@
 .stars::after {
   width: 1px;
   height: 1px;
-  box-shadow: 
+  box-shadow:
     40px 80px 0 0 rgba(255, 255, 255, 0.6),
     120px 140px 0 0 rgba(255, 255, 255, 0.6),
     200px 90px 0 0 rgba(255, 255, 255, 0.6),
@@ -295,7 +322,7 @@
   line-height: 1.5;
 }
 
-.checkbox-label input[type='checkbox'] {
+.checkbox-label input[type="checkbox"] {
   margin-top: 3px;
   cursor: pointer;
   width: 16px;
@@ -305,7 +332,7 @@
 
 .submit-btn {
   width: 100%;
-  background-color: #12141A;
+  background-color: #12141a;
   color: white;
   height: 48px;
   border: none;
@@ -318,11 +345,11 @@
 }
 
 .submit-btn:hover {
-  background-color: #2A2C36;
+  background-color: #2a2c36;
 }
 
 .submit-btn:active {
-  background-color: #2A2C36;
+  background-color: #2a2c36;
 }
 
 .terms {
@@ -348,7 +375,7 @@
   .signin-right {
     padding: 40px 50px;
   }
-  
+
   .signin {
     padding: 60px 40px;
   }
@@ -377,18 +404,18 @@
     padding: 30px;
   }
 }
-.logo{
-    justify-content: center;
-    text-align: center;
-    align-items: center;
-    display: flex;
-    padding: 130px;
+.logo {
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  padding: 130px;
 }
-.logo li{
-    list-style: none;
+.logo li {
+  list-style: none;
 }
-.logo ul{
-    display: flex;
-    gap: 20px;
+.logo ul {
+  display: flex;
+  gap: 20px;
 }
 </style>

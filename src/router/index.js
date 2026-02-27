@@ -2,7 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SignUp from '../views/auth/Signup.vue'
 import Login from '../views/auth/Login.vue'
-import studentprofile from '../views/studentprofile.vue'
+// import studentprofile from '../views/studentprofile.vue'
 
 const routes = [
   {
@@ -15,11 +15,11 @@ const routes = [
     name: 'Login',
     component: Login
   },
-  {
-     path: '/studentprofile',
-    name: 'studentprofile',
-    component: studentprofile
-  }
+  // {
+  //    path: '/studentprofile',
+  //   name: 'studentprofile',
+  //   component: studentprofile
+  // }
 ]
 
 const router = createRouter({
