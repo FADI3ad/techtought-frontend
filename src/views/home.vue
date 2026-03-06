@@ -202,7 +202,7 @@
 </template>
 
 <style scoped>
-  /* .main-wrapper {
+  .main-wrapper {
     max-width: 1340px;
     margin: 0 auto;
     background: #fff;
@@ -218,7 +218,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 40px;
-  } */
+  }
 
   /* --- Hero & Carousel --- */
   .hero-sec {
