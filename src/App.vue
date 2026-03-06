@@ -1,10 +1,14 @@
-<template>
-  <router-view />
-</template>
+
 
 <script>
 export default {};
 </script>
+
+<template>
+  <router-view />
+</template>
+
+
 
 <style>
 body {
@@ -16,10 +20,10 @@ body {
   overflow-x: hidden;
 }
 
-/* ده اللي هيخلي الصفحات 1340px */
+
 .main-container {
   max-width: 1340px;
-  margin: auto; /* يخليها في النص */
-  padding: 0 20px; /* مسافة يمين وشمال */
+  margin: auto; 
+  padding: 0 20px; 
 }
 </style>
