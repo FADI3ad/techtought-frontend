@@ -1,38 +1,29 @@
-
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/home.vue'
-import SignUp from '../views/auth/Signup.vue'
-import Login from '../views/auth/Login.vue'
-
-// import studentprofile from '../views/studentprofile.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import HomeGuest from "../views/HomeGuest.vue";
+import HomeAuth from "../views/HomeAuth.vue";
+import SignUp from "../views/auth/Signup.vue";
+import Login from "../views/auth/Login.vue";
+import { useAuthStore } from "../stores/authStore";
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/signup', 
-    name: 'SignUp',
-    component: SignUp  
-  },
-  {
-    path: '/Login',
-    name: 'Login',
-    component: Login
-  },
-  // {
-  //    path: '/studentprofile',
-  //   name: 'studentprofile',
-  //   component: studentprofile
-  // }
-]
+  { path: "/", name: "HomeGuest", component: HomeGuest, meta: { guest: true } },
+  { path: "/dashboard", name: "HomeAuth", component: HomeAuth, meta: { requiresAuth: true } },
+  { path: "/login", name: "login", component: Login, meta: { guest: true } },
+  { path: "/signup", name: "signup", component: SignUp, meta: { guest: true } },
+];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
 
 
-export default router
+router.beforeEach((to, from, next) => {
+  const auth = useAuthStore();
+
+  if (to.meta.requiresAuth && !auth.isLoggedIn) next("/login");
+  else if (to.meta.guest && auth.isLoggedIn) next("/dashboard");
+  else next();
+});
+
+export default router;

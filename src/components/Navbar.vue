@@ -1,14 +1,20 @@
+<script setup>
+  import { useAuthStore } from "../stores/authStore";
+
+  const auth = useAuthStore();
+</script>
+
 <template>
   <nav class="w-full bg-white border-b border-gray-200 font-sans">
     <div
-      class="flex items-center justify-between h-[80px] gap-8 border-b border-gray-200 px-12">
+      class="flex items-center justify-center h-[80px] gap-8 border-b border-gray-200 px-12">
       <div class="text-3xl font-bold tracking-tight text-black">LOGO</div>
 
       <div class="flex-grow relative max-w-[850px]">
         <input
           type="text"
           placeholder="Search for files, plugins, and creators"
-          class="w-full h-[48px]  pl-6 pr-14 rounded-full border border-gray-400 focus:outline-none focus:border-blue-500 text-gray-600 placeholder-gray-500" />
+          class="w-full h-[48px] pl-6 pr-14 rounded-full border border-gray-400 focus:outline-none focus:border-blue-500 text-gray-600 placeholder-gray-500" />
         <button
           class="absolute right-1 top-1 bg-[#1DA1F2] text-white p-2.5 rounded-full hover:bg-blue-500 transition-colors">
           <svg
@@ -26,14 +32,26 @@
         </button>
       </div>
 
-      <div
-        class="flex items-center gap-6 text-[15px] font-semibold text-[#444]">
-        <a href="#" class="hover:text-black">About</a>
-        <a href="#" class="hover:text-black">Tech Taught</a>
-        <a href="#" class="hover:text-black">Contact Us</a>
-        <a href="#" class="hover:text-black">My learning</a>
+      <div class="flex items-center gap-6 text-[15px] font-semibold text-[#444] justify-between">
 
-        <button class="text-gray-400 hover:text-red-500 ml-2">
+        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300" v-if="!auth.isLoggedIn">Teach with TechTaught</a>
+        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300" v-if="!auth.isLoggedIn">About</a>
+        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300" v-if="auth.isLoggedIn">Contact Us</a>
+
+        <router-link
+          v-if="!auth.isLoggedIn"
+          to="/signup"
+          class="bg-[#1DA1F2] text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-500 transition-colors inline-block text-center">
+          Join Us
+        </router-link>
+        
+        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300" v-if="auth.isLoggedIn"
+          >My learning</a
+        >
+
+        <button
+          class="text-gray-400 hover:text-red-500 ml-2"
+          v-if="auth.isLoggedIn">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-7 w-7"
@@ -49,7 +67,8 @@
         </button>
 
         <div
-          class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 cursor-pointer">
+          class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 cursor-pointer"
+          v-if="auth.isLoggedIn">
           <img
             src="https://via.placeholder.com/48"
             alt="User Profile"
@@ -58,7 +77,7 @@
       </div>
     </div>
 
-    <div class="max-w-[1340px] mx-auto px-4">
+    <div class="max-w-[1340px] mx-auto px-4" v-if="auth.isLoggedIn">
       <div
         class="flex items-center justify-between border-t border-gray-100 h-[50px] relative flex-nowrap overflow-hidden">
         <button class="text-gray-800 p-1">
@@ -104,8 +123,6 @@
     </div>
   </nav>
 </template>
-
-<script setup></script>
 
 <style scoped>
   nav {
