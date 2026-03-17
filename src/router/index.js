@@ -3,6 +3,7 @@ import HomeGuest from "../views/HomeGuest.vue";
 import HomeAuth from "../views/HomeAuth.vue";
 import SignUp from "../views/auth/Signup.vue";
 import Login from "../views/auth/Login.vue";
+import InstructorApplication from "../views/InstructorApplication.vue";
 import { useAuthStore } from "../stores/authStore";
 
 const routes = [
@@ -10,6 +11,8 @@ const routes = [
   { path: "/dashboard", name: "HomeAuth", component: HomeAuth, meta: { requiresAuth: true } },
   { path: "/login", name: "login", component: Login, meta: { guest: true } },
   { path: "/signup", name: "signup", component: SignUp, meta: { guest: true } },
+  { path: "/instructor-application", name: "instructor-application", component: InstructorApplication, meta: { guest: true }},
+  
 ];
 
 const router = createRouter({
