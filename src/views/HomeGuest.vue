@@ -147,7 +147,7 @@
   <div class="overflow-hidden">
     <!-- Hero  -->
     <section
-      class="relative pt-32 pb-0 bg-gradient-to-r from-white via-[#efefff] to-[#d1d1ff] overflow-hidden">
+      class="relative pt-32 pb-0 bg-gradient-to-r from-white via-[#efefff] to-[#0800FF] overflow-hidden ">
       <div
         class="max-w-[1340px] mx-auto px-6 lg:px-10 flex flex-col lg:flex-row items-start justify-between">
         <div class="flex-1 z-10 text-center lg:text-left lg:mb-0">
@@ -257,11 +257,13 @@
             </div>
           </div>
 
-          <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <CourseCard v-for="course in courses" :key="course.id" :course="course" />
+          <div
+            class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <CourseCard
+              v-for="course in courses"
+              :key="course.id"
+              :course="course" />
           </div>
-
-
         </div>
 
         <div class="mt-12 text-center lg:text-left">

@@ -38,7 +38,9 @@
       </button>
 
       <div class="text-2xl md:text-3xl font-bold tracking-tight text-black flex-shrink-0">
-        <router-link to="/"> LOGO </router-link>
+        <router-link to="/"> 
+          <img src="../assets/images/logo.png" alt="">
+           </router-link>
       </div>
 
       <div class="hidden md:block flex-grow relative max-w-[850px]">
@@ -86,7 +88,7 @@
 
     <div class="max-w-[1340px] mx-auto px-2 md:px-4" v-if="auth.isLoggedIn">
       <div class="flex items-center relative group">
-        <button @click="scroll('left')" class="hidden md:block absolute left-0 z-10 bg-white shadow-md rounded-full p-1 border border-gray-100">
+        <button @click="scroll('left')" class="hidden md:block absolute left-0 z-10   rounded-full ">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
           </svg>
@@ -106,7 +108,7 @@
           </div>
         </div>
 
-        <button @click="scroll('right')" class="hidden md:block absolute right-0 z-10 bg-white shadow-md rounded-full p-1 border border-gray-100">
+        <button @click="scroll('right')" class="hidden md:block absolute right-0 z-10   rounded-full ">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
           </svg>

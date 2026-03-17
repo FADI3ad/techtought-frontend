@@ -8,24 +8,23 @@
 </script>
 
 <template>
-  <div class="group cursor-pointer">
+  <div class="course-inner cursor-pointer">
     <div
-      class="relative overflow-hidden rounded-xl mb-4 shadow-sm group-hover:shadow-md transition-shadow">
+      class="relative overflow-hidden rounded-xl mb-4 shadow-sm transition-shadow duration-300">
       <img
         :src="course.image_path"
         alt="Course Thumbnail"
-        class="w-full h-34 object-cover group-hover:scale-105 transition-transform duration-500" />
+        class="w-full h-34 object-cover transition-transform duration-500" />
     </div>
 
-    <h3
-      class="font-bold leading-snug mb-2 group-hover:text-indigo-600 transition-colors">
+    <h3 class="font-bold leading-snug mb-2 transition-colors duration-300">
       {{ course.title }}
     </h3>
 
-    <div class="flex items-center text-sm text-gray-500 gap-4 mb-2">
-      <span class="flex items-center gap-1">
+    <div class="flex items-center text-sm text-gray-500 gap-3 mb-2 flex-nowrap">
+      <span class="flex items-center gap-1 whitespace-nowrap">
         <svg
-          class="w-4 h-4"
+          class="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24">
@@ -34,9 +33,9 @@
         10 weeks
       </span>
 
-      <span class="flex items-center gap-1">
+      <span class="flex items-center gap-1 whitespace-nowrap">
         <svg
-          class="w-4 h-4"
+          class="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24">
@@ -48,8 +47,7 @@
     </div>
 
     <div class="flex items-center justify-between border-t pt-3">
-      <span class="text-sm font-medium text-gray-700"> Robert Martinez </span>
-
+      <span class="text-sm font-medium text-gray-700">Robert Martinez</span>
       <div class="flex items-center gap-1">
         <span class="text-yellow-400 text-xs">★★★★★</span>
         <span class="text-xs font-bold text-gray-900">4.8</span>
@@ -57,3 +55,17 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+  .course-inner:hover .relative {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .course-inner:hover img {
+    transform: scale(1.05);
+  }
+
+  .course-inner:hover h3 {
+    color: #4f46e5;
+  }
+</style>

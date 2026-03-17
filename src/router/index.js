@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeGuest from "../views/HomeGuest.vue";
+import CategoryCourses from "../views/CategoryCourses.vue";
 import HomeAuth from "../views/HomeAuth.vue";
 import SignUp from "../views/auth/Signup.vue";
 import Login from "../views/auth/Login.vue";
@@ -12,7 +13,7 @@ const routes = [
   { path: "/login", name: "login", component: Login, meta: { guest: true } },
   { path: "/signup", name: "signup", component: SignUp, meta: { guest: true } },
   { path: "/instructor-application", name: "instructor-application", component: InstructorApplication, meta: { guest: true }},
-  
+  { path: "/category", name: "category", component: CategoryCourses, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
