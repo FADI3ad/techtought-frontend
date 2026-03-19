@@ -2,7 +2,9 @@
   import { ref, onMounted } from "vue";
   import CourseCard from "../components/CourseCard.vue";
   import api from "../api/axios";
-
+  import { useAuthStore } from "../stores/authStore";
+  
+  const authStore = useAuthStore();
   const trendingCourses = ref([]);
   const fundamentalsCourses = ref([]);
 
@@ -54,16 +56,17 @@
         <div class="flex items-center gap-6">
           <div class="relative">
             <img
-              src="https://placehold.co/100x100?text=S"
+              src="../assets/images/user.png"
               alt="Sandra"
-              class="w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover" />
+              class="w-16 h-16 rounded-full object-cover" />
             <div
               class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           <div>
             <h1
               class="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">
-              Welcome back, <span class="text-indigo-600">Sandra</span>
+              Welcome back,
+              <span class="text-indigo-600">{{ authStore.user.name }}</span>
             </h1>
             <p class="text-gray-500 mt-1 font-medium">
               Ready to continue your learning journey?
@@ -84,7 +87,7 @@
           <div class="w-20 h-1.5 bg-indigo-600 mt-2 rounded-full"></div>
         </div>
 
-        <div class="scroll-section-wrapper relative group ">
+        <div class="scroll-section-wrapper relative group">
           <!-- زر اليسار -->
           <button
             @click="scrollSection($event, 'left')"
@@ -228,14 +231,10 @@
     display: none;
   }
 
-
   .course-card-wrapper {
     flex-shrink: 0;
-    width: 240px; 
+    width: 240px;
   }
-
- 
-
 
   /* hover effect على الكارت */
   .course-card-wrapper {

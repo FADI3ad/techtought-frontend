@@ -1,4 +1,58 @@
-<script setup></script>
+<script setup>
+  import { ref } from "vue";
+  import axios from "axios";
+  import { useRouter } from "vue-router";
+  import { useAuthStore } from "../../stores/authStore";
+
+  const router = useRouter();
+  const authStore = useAuthStore();
+
+  const form = ref({
+    email: "",
+    password: "",
+  });
+
+  const errors = ref({});
+  const loading = ref(false);
+  const serverError = ref("");
+
+  const handleSubmit = async () => {
+    errors.value = {};
+    serverError.value = "";
+    loading.value = true;
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/login",
+        {
+          email: form.value.email,
+          password: form.value.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        },
+      );
+
+      authStore.login(response.data.data.user);
+      router.push("/dashboard");
+    } catch (error) {
+      loading.value = false;
+
+      if (error.response?.status === 422) {
+        errors.value = error.response.data.errors || {};
+      } else if (error.response?.status === 401) {
+        serverError.value = "Invalid email or password.";
+      } else if (error.response?.data?.message) {
+        serverError.value = error.response.data.message;
+      } else {
+        serverError.value = "Something went wrong. Please try again.";
+      }
+    }
+  };
+</script>
 
 <template>
   <div class="sign">
@@ -6,7 +60,7 @@
     <div class="signin">
       <div class="inner left-inner">
         <div class="stars"></div>
-        <h2 class="signin-left">Sign up for TechTought</h2>
+        <h2 class="signin-left">Welcome back to TechTought</h2>
         <p>
           Explore TechTought core features for individuals and organizations.
         </p>
@@ -21,34 +75,48 @@
           <router-link to="/signup">Sign up →</router-link>
         </h4>
 
-        <h2 class="sig">Sign up for TechTought</h2>
+        <h2 class="sig">Sign in to TechTought</h2>
 
-        <form class="form-container">
+        <!-- Server Error -->
+        <div v-if="serverError" class="server-error">
+          {{ serverError }}
+        </div>
+
+        <form class="form-container" @submit.prevent="handleSubmit">
+          <!-- Email -->
           <div class="form-group">
             <label>Email*</label>
-            <input type="email" placeholder="Your work email" />
+            <input
+              v-model="form.email"
+              type="email"
+              placeholder="Your email"
+              :class="{ 'input-error': errors.email }" />
+            <span v-if="errors.email" class="error-msg">{{
+              errors.email[0]
+            }}</span>
           </div>
 
+          <!-- Password -->
           <div class="form-group">
             <label>Password*</label>
             <input
+              v-model="form.password"
               type="password"
-              placeholder="Must be at least 8 characters." />
+              placeholder="Must be at least 8 characters."
+              :class="{ 'input-error': errors.password }" />
+            <span v-if="errors.password" class="error-msg">{{
+              errors.password[0]
+            }}</span>
           </div>
 
-          <div class="checkbox-group">
-            <h5>Email preferences</h5>
-            <label class="checkbox-label">
-              <input type="checkbox" />
-              Receive occasional product updates and announcements.
-            </label>
-          </div>
-
-          <button type="submit" class="submit-btn">Login</button>
+          <!-- Submit -->
+          <button type="submit" class="submit-btn" :disabled="loading">
+            {{ loading ? "Signing in..." : "Login" }}
+          </button>
 
           <div class="terms">
             <p>
-              By creating an account, you agree to the
+              By signing in, you agree to the
               <a href="">Terms of Service</a> and <a href="">Privacy Policy</a>.
             </p>
           </div>
@@ -58,332 +126,13 @@
   </div>
 </template>
 <style scoped>
-/* ===== Layout Structure ===== */
+  /* ===== Layout Structure ===== */
 
-.sign {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
-  width: 100%;
-}
-
-
-.signin,
-.signin-right {
-  width: 100%;
-}
-
-
-.inner {
-  width: 100%;
-  max-width: 670px; 
-  margin: 0 auto;
-}
-
-
-.left-inner {
-  padding: 80px 40px;
-  position: relative;
-}
-
-.right-inner {
-  padding: 40px 40px;
-}
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.sign {
-  display: flex;
-  min-height: 100vh;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-}
-
-.signin {
-  background: radial-gradient(
-    circle at bottom,
-    #61dafb -150%,
-    #020103 70%,
-    #020103 10%
-  );
-  color: white;
-  padding: 80px 15px;
-  width: 50%;
-
-  position: relative;
-  overflow: hidden;
-}
-
-.stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.stars::before,
-.stars::after {
-  content: "";
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  box-shadow:
-    20px 40px 0 0 white,
-    80px 100px 0 0 white,
-    150px 60px 0 0 white,
-    300px 150px 0 0 white,
-    250px 50px 0 0 white,
-    100px 200px 0 0 white,
-    350px 250px 0 0 white,
-    180px 180px 0 0 white,
-    280px 80px 0 0 white,
-    50px 300px 0 0 white,
-    320px 350px 0 0 white,
-    200px 120px 0 0 white,
-    400px 200px 0 0 white,
-    120px 400px 0 0 white,
-    380px 450px 0 0 white,
-    220px 320px 0 0 white,
-    340px 180px 0 0 white,
-    90px 150px 0 0 white,
-    270px 420px 0 0 white,
-    160px 280px 0 0 white,
-    410px 320px 0 0 white,
-    60px 500px 0 0 white,
-    310px 520px 0 0 white,
-    190px 460px 0 0 white,
-    420px 100px 0 0 white,
-    140px 50px 0 0 rgba(255, 255, 255, 0.5),
-    360px 400px 0 0 rgba(255, 255, 255, 0.5),
-    240px 240px 0 0 rgba(255, 255, 255, 0.5),
-    70px 380px 0 0 rgba(255, 255, 255, 0.5),
-    390px 280px 0 0 rgba(255, 255, 255, 0.5);
-  animation: twinkle 3s infinite alternate;
-}
-
-.stars::after {
-  width: 1px;
-  height: 1px;
-  box-shadow:
-    40px 80px 0 0 rgba(255, 255, 255, 0.6),
-    120px 140px 0 0 rgba(255, 255, 255, 0.6),
-    200px 90px 0 0 rgba(255, 255, 255, 0.6),
-    330px 190px 0 0 rgba(255, 255, 255, 0.6),
-    280px 120px 0 0 rgba(255, 255, 255, 0.6),
-    130px 250px 0 0 rgba(255, 255, 255, 0.6),
-    370px 300px 0 0 rgba(255, 255, 255, 0.6),
-    210px 210px 0 0 rgba(255, 255, 255, 0.6),
-    300px 110px 0 0 rgba(255, 255, 255, 0.6),
-    80px 330px 0 0 rgba(255, 255, 255, 0.6),
-    340px 380px 0 0 rgba(255, 255, 255, 0.6),
-    230px 150px 0 0 rgba(255, 255, 255, 0.6),
-    430px 230px 0 0 rgba(255, 255, 255, 0.6),
-    150px 430px 0 0 rgba(255, 255, 255, 0.6),
-    400px 480px 0 0 rgba(255, 255, 255, 0.6),
-    250px 350px 0 0 rgba(255, 255, 255, 0.6);
-  animation: twinkle 4s infinite alternate-reverse;
-}
-
-@keyframes twinkle {
-  0% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.4;
-  }
-}
-
-.signin-left {
-  font-size: 48px;
-  font-weight: 300;
-  margin-bottom: 20px;
-  line-height: 1.25;
-  letter-spacing: -0.5px;
-  position: relative;
-  z-index: 1;
-}
-
-.signin p {
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.5;
-  position: relative;
-  z-index: 1;
-}
-
-.signin-right {
-  width: 50%;
-  padding: 40px 80px;
-  background-color: #f6f8fa;
-  overflow-y: auto;
-}
-
-.already-have-account {
-  text-align: right;
-  font-size: 14px;
-  font-weight: 400;
-  margin-bottom: 40px;
-  color: #57606a;
-}
-
-.already-have-account a {
-  color: #0969da;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.already-have-account a:hover {
-  text-decoration: underline;
-}
-
-.sig {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 32px;
-  color: #1f2328;
-}
-
-.form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1f2328;
-}
-
-.form-group input,
-.form-group select {
-  padding: 12px 14px;
-  border-radius: 6px;
-  border: 1px solid #d0d7de;
-  font-size: 14px;
-  background-color: white;
-  transition: all 0.2s;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #0969da;
-  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
-}
-
-.form-group input::placeholder {
-  color: #6e7781;
-}
-
-.form-group select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236e7781' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 40px;
-}
-
-.checkbox-group {
-  margin-top: 8px;
-}
-
-.checkbox-group h5 {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #1f2328;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 14px;
-  color: #1f2328;
-  cursor: pointer;
-  line-height: 1.5;
-}
-
-.checkbox-label input[type="checkbox"] {
-  margin-top: 3px;
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-.submit-btn {
-  width: 100%;
-  background-color: #12141a;
-  color: white;
-  height: 48px;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: background-color 0.2s;
-}
-
-.submit-btn:hover {
-  background-color: #2a2c36;
-}
-
-.submit-btn:active {
-  background-color: #2a2c36;
-}
-
-.terms {
-  margin-top: 8px;
-}
-
-.terms p {
-  font-size: 12px;
-  color: #57606a;
-  line-height: 1.6;
-}
-
-.terms a {
-  color: #0969da;
-  text-decoration: none;
-}
-
-.terms a:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 1024px) {
-  .signin-right {
-    padding: 40px 50px;
-  }
-
-  .signin {
-    padding: 60px 40px;
-  }
-}
-
-@media (max-width: 768px) {
   .sign {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+    width: 100%;
   }
 
   .signin,
@@ -391,31 +140,348 @@
     width: 100%;
   }
 
+  .inner {
+    width: 100%;
+    max-width: 670px;
+    margin: 0 auto;
+  }
+
+  .left-inner {
+    padding: 80px 40px;
+    position: relative;
+  }
+
+  .right-inner {
+    padding: 40px 40px;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sign {
+    display: flex;
+    min-height: 100vh;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+      sans-serif;
+  }
+
   .signin {
-    min-height: 300px;
-    padding: 40px 30px;
+    background: radial-gradient(
+      circle at bottom,
+      #61dafb -150%,
+      #020103 70%,
+      #020103 10%
+    );
+    color: white;
+    padding: 80px 15px;
+    width: 50%;
+
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .stars::before,
+  .stars::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    box-shadow:
+      20px 40px 0 0 white,
+      80px 100px 0 0 white,
+      150px 60px 0 0 white,
+      300px 150px 0 0 white,
+      250px 50px 0 0 white,
+      100px 200px 0 0 white,
+      350px 250px 0 0 white,
+      180px 180px 0 0 white,
+      280px 80px 0 0 white,
+      50px 300px 0 0 white,
+      320px 350px 0 0 white,
+      200px 120px 0 0 white,
+      400px 200px 0 0 white,
+      120px 400px 0 0 white,
+      380px 450px 0 0 white,
+      220px 320px 0 0 white,
+      340px 180px 0 0 white,
+      90px 150px 0 0 white,
+      270px 420px 0 0 white,
+      160px 280px 0 0 white,
+      410px 320px 0 0 white,
+      60px 500px 0 0 white,
+      310px 520px 0 0 white,
+      190px 460px 0 0 white,
+      420px 100px 0 0 white,
+      140px 50px 0 0 rgba(255, 255, 255, 0.5),
+      360px 400px 0 0 rgba(255, 255, 255, 0.5),
+      240px 240px 0 0 rgba(255, 255, 255, 0.5),
+      70px 380px 0 0 rgba(255, 255, 255, 0.5),
+      390px 280px 0 0 rgba(255, 255, 255, 0.5);
+    animation: twinkle 3s infinite alternate;
+  }
+
+  .stars::after {
+    width: 1px;
+    height: 1px;
+    box-shadow:
+      40px 80px 0 0 rgba(255, 255, 255, 0.6),
+      120px 140px 0 0 rgba(255, 255, 255, 0.6),
+      200px 90px 0 0 rgba(255, 255, 255, 0.6),
+      330px 190px 0 0 rgba(255, 255, 255, 0.6),
+      280px 120px 0 0 rgba(255, 255, 255, 0.6),
+      130px 250px 0 0 rgba(255, 255, 255, 0.6),
+      370px 300px 0 0 rgba(255, 255, 255, 0.6),
+      210px 210px 0 0 rgba(255, 255, 255, 0.6),
+      300px 110px 0 0 rgba(255, 255, 255, 0.6),
+      80px 330px 0 0 rgba(255, 255, 255, 0.6),
+      340px 380px 0 0 rgba(255, 255, 255, 0.6),
+      230px 150px 0 0 rgba(255, 255, 255, 0.6),
+      430px 230px 0 0 rgba(255, 255, 255, 0.6),
+      150px 430px 0 0 rgba(255, 255, 255, 0.6),
+      400px 480px 0 0 rgba(255, 255, 255, 0.6),
+      250px 350px 0 0 rgba(255, 255, 255, 0.6);
+    animation: twinkle 4s infinite alternate-reverse;
+  }
+
+  @keyframes twinkle {
+    0% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.4;
+    }
   }
 
   .signin-left {
-    font-size: 36px;
+    font-size: 48px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .signin p {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
   }
 
   .signin-right {
-    padding: 30px;
+    width: 50%;
+    padding: 40px 80px;
+    background-color: #f6f8fa;
+    overflow-y: auto;
   }
-}
-.logo {
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  display: flex;
-  padding: 130px;
-}
-.logo li {
-  list-style: none;
-}
-.logo ul {
-  display: flex;
-  gap: 20px;
-}
+
+  .already-have-account {
+    text-align: right;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 40px;
+    color: #57606a;
+  }
+
+  .already-have-account a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .already-have-account a:hover {
+    text-decoration: underline;
+  }
+
+  .sig {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 32px;
+    color: #1f2328;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2328;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px 14px;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+    font-size: 14px;
+    background-color: white;
+    transition: all 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #0969da;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+  }
+
+  .form-group input::placeholder {
+    color: #6e7781;
+  }
+
+  .form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236e7781' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+
+  .checkbox-group {
+    margin-top: 8px;
+  }
+
+  .checkbox-group h5 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #1f2328;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: #1f2328;
+    cursor: pointer;
+    line-height: 1.5;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    margin-top: 3px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .submit-btn {
+    width: 100%;
+    background-color: #12141a;
+    color: white;
+    height: 48px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background-color 0.2s;
+  }
+
+  .submit-btn:hover {
+    background-color: #2a2c36;
+  }
+
+  .submit-btn:active {
+    background-color: #2a2c36;
+  }
+
+  .terms {
+    margin-top: 8px;
+  }
+
+  .terms p {
+    font-size: 12px;
+    color: #57606a;
+    line-height: 1.6;
+  }
+
+  .terms a {
+    color: #0969da;
+    text-decoration: none;
+  }
+
+  .terms a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 1024px) {
+    .signin-right {
+      padding: 40px 50px;
+    }
+
+    .signin {
+      padding: 60px 40px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .sign {
+      flex-direction: column;
+    }
+
+    .signin,
+    .signin-right {
+      width: 100%;
+    }
+
+    .signin {
+      min-height: 300px;
+      padding: 40px 30px;
+    }
+
+    .signin-left {
+      font-size: 36px;
+    }
+
+    .signin-right {
+      padding: 30px;
+    }
+  }
+  .logo {
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    padding: 130px;
+  }
+  .logo li {
+    list-style: none;
+  }
+  .logo ul {
+    display: flex;
+    gap: 20px;
+  }
 </style>
