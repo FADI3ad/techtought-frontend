@@ -1,83 +1,123 @@
 <script setup>
-  import { ref, onMounted, onUnmounted } from "vue";
-  import { useRouter } from "vue-router";
-  import { useAuthStore } from "../stores/authStore";
-  import axios from "axios";
+import { ref, onMounted, onUnmounted, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "../stores/authStore";
+import api from "../api/axios";
+import axios from "axios";
 
-  const auth = useAuthStore();
-  const router = useRouter();
+const auth = useAuthStore();
+const router = useRouter();
+const route = useRoute();
 
-  const isMenuOpen = ref(false);
-  const isProfileMenuOpen = ref(false);
-  const scrollContainer = ref(null);
+const isMenuOpen = ref(false);
+const isProfileMenuOpen = ref(false);
+const scrollContainer = ref(null);
 
-  const categories = ref([
-    "Computer Fundamentals",
-    "Web Development",
-    "Mobile Development",
-    "Desktop Development",
-    "AI & ML",
-    "Data Science",
-    "Networking",
-    "Cloud Computing",
-    "Cyber Security",
-    "UI/UX Design",
-  ]);
+const categories = ref([]);
+const subcategories = ref([]);
+const activeSlug = ref(null);
+const activeName = ref(null);
+const loadingSubcategories = ref(false);
 
-  const toggleMenu = () => {
-    isMenuOpen.value = !isMenuOpen.value;
-  };
+async function loadCategories() {
+  try {
+    const res = await api.get("categories/navbar");
+    categories.value = res.data.data.categories;
+  } catch (error) {
+    console.error("Error loading categories:", error);
+  }
+}
 
-  const toggleProfileMenu = () => {
-    isProfileMenuOpen.value = !isProfileMenuOpen.value;
-  };
+async function loadSubcategories(slug) {
+  loadingSubcategories.value = true;
+  try {
+    const res = await api.get(`categories/${slug}/subcategories`);
+    subcategories.value = res.data.data?.category?.subcategories ?? [];
+  } catch (error) {
+    console.error("Error loading subcategories:", error);
+    subcategories.value = [];
+  } finally {
+    loadingSubcategories.value = false;
+  }
+}
 
-  const closeDropdown = (e) => {
-    if (!e.target.closest(".profile-dropdown-container")) {
-      isProfileMenuOpen.value = false;
+async function selectCategory(cat) {
+  activeSlug.value = cat.slug;
+  activeName.value = cat.name;
+  loadSubcategories(cat.slug);
+  router.push({ name: "category", params: { slug: cat.slug } });
+}
+
+// Go back to showing all categories
+function clearCategory() {
+  activeSlug.value = null;
+  activeName.value = null;
+  subcategories.value = [];
+}
+
+function selectSubcategory(subSlug) {
+  router.push({
+    name: "subcategory",
+    params: { slug: activeSlug.value, subSlug },
+  });
+}
+
+const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value);
+const toggleProfileMenu = () =>
+  (isProfileMenuOpen.value = !isProfileMenuOpen.value);
+
+const closeDropdown = (e) => {
+  if (!e.target.closest(".profile-dropdown-container"))
+    isProfileMenuOpen.value = false;
+};
+
+onMounted(() => {
+  window.addEventListener("click", closeDropdown);
+  loadCategories();
+});
+onUnmounted(() => window.removeEventListener("click", closeDropdown));
+
+const scroll = (direction) => {
+  if (scrollContainer.value)
+    scrollContainer.value.scrollBy({
+      left: direction === "left" ? -200 : 200,
+      behavior: "smooth",
+    });
+};
+
+const logout = async () => {
+  try {
+    if (auth.user?.token)
+      await axios.post(
+        "/api/logout",
+        {},
+        { headers: { Authorization: `Bearer ${auth.user.token}` } },
+      );
+  } catch (err) {
+    console.error("Logout API error:", err);
+  } finally {
+    auth.logout();
+    isProfileMenuOpen.value = false;
+    router.push("/");
+  }
+};
+
+// ── WATCH ROUTE TO RESET NAVBAR WHEN USER GOES BACK ──
+watch(
+  () => route.name,
+  (newName) => {
+    if (newName !== "category" && newName !== "subcategory") {
+      clearCategory();
     }
-  };
-
-  onMounted(() => window.addEventListener("click", closeDropdown));
-  onUnmounted(() => window.removeEventListener("click", closeDropdown));
-
-  const scroll = (direction) => {
-    if (scrollContainer.value) {
-      const scrollAmount = 200;
-      scrollContainer.value.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const logout = async () => {
-    try {
-     
-      if (auth.user?.token) {
-        await axios.post(
-          "/api/logout",
-          {},
-          { headers: { Authorization: `Bearer ${auth.user.token}` } },
-        );
-      }
-    } catch (err) {
-      console.error("Logout API error:", err);
-    } finally {
-      auth.logout();
-      isProfileMenuOpen.value = false;
-      router.push("/"); 
-    }
-  };
+  }
+);
 </script>
-
 <template>
   <nav
     class="w-full bg-white border-b border-gray-200 font-sans sticky top-0 z-50">
-    <!-- Nav Top -->
+    <!-- ════════ Nav Top ════════ -->
     <div
       class="flex items-center justify-between h-[70px] md:h-[80px] gap-4 md:gap-8 border-b border-gray-200 px-4 md:px-12">
-      <!-- Mobile menu button -->
       <button @click="toggleMenu" class="md:hidden text-gray-600">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -100,15 +140,13 @@
         </svg>
       </button>
 
-      <!-- Logo -->
       <div
         class="text-2xl md:text-3xl font-bold tracking-tight text-black flex-shrink-0">
-        <router-link to="/">
-          <img src="../assets/images/logo.png" alt="Logo" />
-        </router-link>
+        <router-link to="/"
+          ><img src="../assets/images/logo.png" alt="Logo"
+        /></router-link>
       </div>
 
-      <!-- Search -->
       <div class="hidden md:block flex-grow relative max-w-[850px]">
         <input
           type="text"
@@ -131,30 +169,26 @@
         </button>
       </div>
 
-      <!-- Right actions -->
       <div
         class="flex items-center gap-3 md:gap-6 text-[15px] font-semibold text-[#444]">
-        <!-- If not logged in -->
         <template v-if="!auth.isLoggedIn">
           <router-link
             to="/instructor-application"
-            class="hidden lg:block hover:text-blue-600 transition-colors"
-            >Teach with TechTought</router-link
-          >
+            class="hidden lg:block hover:text-blue-600 transition-colors">
+            Teach with TechTought
+          </router-link>
           <router-link
             to="/signup"
-            class="bg-[#1DA1F2] text-white px-4 py-2 md:px-5 md:py-2 rounded-lg hover:bg-blue-500 transition-colors text-sm md:text-base"
-            >Join Us</router-link
-          >
+            class="bg-[#1DA1F2] text-white px-4 py-2 md:px-5 md:py-2 rounded-lg hover:bg-blue-500 transition-colors text-sm md:text-base">
+            Join Us
+          </router-link>
         </template>
 
-        <!-- If logged in -->
         <template v-else>
           <a href="#" class="hidden sm:block hover:text-blue-600"
             >My learning</a
           >
 
-          <!-- Favorite / Heart icon -->
           <button class="text-gray-400 hover:text-red-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -170,7 +204,6 @@
             </svg>
           </button>
 
-          <!-- Profile dropdown -->
           <div class="relative profile-dropdown-container">
             <button
               @click="toggleProfileMenu"
@@ -195,19 +228,17 @@
                   {{ auth.user?.email || "user@example.com" }}
                 </p>
               </div>
-
               <div class="py-1">
                 <router-link to="/profile" class="dropdown-item"
-                  ><span>My Profile</span></router-link
+                  >My Profile</router-link
                 >
                 <router-link to="/settings" class="dropdown-item"
-                  ><span>Settings</span></router-link
+                  >Settings</router-link
                 >
                 <router-link to="/billing" class="dropdown-item"
-                  ><span>Billing & Payments</span></router-link
+                  >Billing & Payments</router-link
                 >
               </div>
-
               <div class="border-t border-gray-100 py-1">
                 <button
                   @click="logout"
@@ -221,7 +252,7 @@
       </div>
     </div>
 
-    <!-- Mobile menu -->
+    <!-- ════════ Mobile menu ════════ -->
     <div
       v-if="isMenuOpen"
       class="md:hidden bg-white border-b border-gray-200 px-4 py-4 space-y-4">
@@ -237,15 +268,16 @@
       </div>
     </div>
 
-    <!-- Categories scroll -->
+    <!-- ════════ Bottom Bar ════════ -->
     <div class="max-w-[1340px] mx-auto px-2 md:px-4" v-if="auth.isLoggedIn">
       <div class="flex items-center relative group">
+        <!-- Scroll left -->
         <button
           @click="scroll('left')"
-          class="hidden md:block absolute left-0 z-10 rounded-full">
+          class="hidden md:flex absolute left-0 z-10 w-7 h-7 items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4"
+            class="h-4 w-4 text-gray-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor">
@@ -260,23 +292,73 @@
         <div
           ref="scrollContainer"
           class="flex items-center overflow-x-auto scroll-smooth no-scrollbar h-[45px] md:h-[50px] w-full px-2 md:px-8">
-          <div class="flex items-center flex-nowrap shrink-0">
-            <a
-              v-for="(cat, index) in categories"
-              :key="index"
-              href="#"
-              class="nav-link shrink-0"
-              >{{ cat }}</a
-            >
-          </div>
+          <!-- ══ STATE A: No category selected → show all categories ══ -->
+          <Transition name="fade" mode="out-in">
+            <div
+              v-if="!activeSlug"
+              key="all-cats"
+              class="flex items-center flex-nowrap">
+              <button
+                v-for="cat in categories"
+                :key="cat.slug"
+                @click="selectCategory(cat)"
+                class="nav-link shrink-0">
+                {{ cat.name }}
+              </button>
+            </div>
+
+            <!-- ══ STATE B: Category selected → show active name + subcategories ══ -->
+            <!-- ══ STATE B: Category selected → show active name + subcategories ══ -->
+            <div
+              v-else
+              key="sub-cats"
+              class="flex items-center flex-nowrap gap-0">
+              <!-- إزالة زر الرجوع -->
+              <span class="active-cat-name shrink-0">{{ activeName }}</span>
+
+              <!-- › separator -->
+              <span
+                class="text-gray-400 font-semibold text-sm px-2 shrink-0 select-none"
+                >›</span
+              >
+
+              <!-- Shimmer -->
+              <template v-if="loadingSubcategories">
+                <div
+                  v-for="n in 4"
+                  :key="n"
+                  class="h-4 w-16 bg-gray-200 rounded animate-pulse shrink-0 mx-3" />
+              </template>
+
+              <!-- Subcategories -->
+              <template v-else>
+                <template v-for="(sub, idx) in subcategories" :key="sub.slug">
+                  <button
+                    @click="selectSubcategory(sub.slug)"
+                    class="sub-link shrink-0"
+                    :class="{
+                      'sub-link--active': route.params.subSlug === sub.slug,
+                    }">
+                    {{ sub.name }}
+                  </button>
+                  <span
+                    v-if="idx < subcategories.length - 1"
+                    class="text-gray-300 text-xs px-1 shrink-0 select-none"
+                    >|</span
+                  >
+                </template>
+              </template>
+            </div>
+          </Transition>
         </div>
 
+        <!-- Scroll right -->
         <button
           @click="scroll('right')"
-          class="hidden md:block absolute right-0 z-10 rounded-full">
+          class="hidden md:flex absolute right-0 z-10 w-7 h-7 items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4"
+            class="h-4 w-4 text-gray-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor">
@@ -293,15 +375,45 @@
 </template>
 
 <style scoped>
+  /* ── All-categories links ── */
   .nav-link {
-    @apply text-[#444] font-semibold px-4 md:px-6 border-r border-gray-200 last:border-0 hover:text-blue-600 transition-all text-xs md:text-sm whitespace-nowrap;
+    @apply bg-transparent cursor-pointer whitespace-nowrap
+         text-[#444] font-semibold text-xs md:text-sm
+         px-4 md:px-6 border-r border-gray-200 last:border-0
+         hover:text-blue-600 transition-colors;
   }
 
-  /* تنسيق عناصر القائمة المنسدلة */
+  /* ── Active category name (bold, no underline needed) ── */
+  .active-cat-name {
+    @apply text-black font-extrabold text-xs md:text-sm whitespace-nowrap;
+  }
+
+  /* ── Back arrow button ── */
+  .back-btn {
+    @apply flex items-center justify-center w-6 h-6 mr-1
+         text-gray-500 hover:text-black transition-colors
+         bg-transparent cursor-pointer rounded-full
+         hover:bg-gray-100;
+  }
+
+  /* ── Subcategory inline links ── */
+  .sub-link {
+    @apply bg-transparent cursor-pointer whitespace-nowrap
+         text-gray-500 font-medium text-xs md:text-sm
+         px-2 hover:text-gray-900 transition-colors;
+  }
+
+  .sub-link--active {
+    @apply text-black font-semibold;
+  }
+
+  /* ── Dropdown items ── */
   .dropdown-item {
-    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors cursor-pointer;
+    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100
+         hover:text-blue-600 transition-colors cursor-pointer;
   }
 
+  /* ── Scrollbar hide ── */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -309,5 +421,21 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── Fade transition between states ── */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease;
+  }
+  .fade-enter-from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  .fade-leave-to {
+    opacity: 0;
+    transform: translateX(-8px);
   }
 </style>

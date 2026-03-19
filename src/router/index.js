@@ -9,18 +9,38 @@ import { useAuthStore } from "../stores/authStore";
 
 const routes = [
   { path: "/", name: "HomeGuest", component: HomeGuest, meta: { guest: true } },
-  { path: "/dashboard", name: "HomeAuth", component: HomeAuth, meta: { requiresAuth: true } },
+  {
+    path: "/dashboard",
+    name: "HomeAuth",
+    component: HomeAuth,
+    meta: { requiresAuth: true },
+  },
   { path: "/login", name: "login", component: Login, meta: { guest: true } },
   { path: "/signup", name: "signup", component: SignUp, meta: { guest: true } },
-  { path: "/instructor-application", name: "instructor-application", component: InstructorApplication, meta: { guest: true }},
-  { path: "/category", name: "category", component: CategoryCourses, meta: { requiresAuth: true } },
+  {
+    path: "/instructor-application",
+    name: "instructor-application",
+    component: InstructorApplication,
+    meta: { guest: true },
+  },
+  {
+    path: "/category/:slug",
+    name: "category",
+    component: CategoryCourses,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/category/:slug/:subSlug",
+    name: "subcategory",
+    component: CategoryCourses, 
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-
 
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore();
