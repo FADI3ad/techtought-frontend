@@ -12,7 +12,7 @@
     <div
       class="relative overflow-hidden rounded-xl mb-4 shadow-sm transition-shadow duration-300">
       <img
-        :src="course.image_path"
+        :src="course.image"
         alt="Course Thumbnail"
         class="w-full h-34 object-cover transition-transform duration-500" />
     </div>
