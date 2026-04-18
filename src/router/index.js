@@ -32,8 +32,21 @@ const routes = [
   {
     path: "/category/:slug/:subSlug",
     name: "subcategory",
-    component: CategoryCourses, 
+    component: CategoryCourses,
     meta: { requiresAuth: true },
+  },
+
+  {
+    path: "/instructor/create-course",
+    name: "create-course",
+    component: () => import("../views/InstructorCreateCourse.vue"),
+    meta: { requiresAuth: false },
+  },
+    {
+    path: "/course/:slug",
+    name: "course-details",
+    component: () => import("../views/CourseDetails.vue"),
+    meta: { requiresAuth: false },
   },
 ];
 

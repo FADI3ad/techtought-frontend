@@ -66,7 +66,7 @@
 
   async function getCategories() {
     try {
-      const response = await api.get("/categories/navbar");
+      const response = await api.get("/categories");
       tabs.value = response.data.data.categories;
       if (tabs.value.length) {
         selectCategory(tabs.value[0]);

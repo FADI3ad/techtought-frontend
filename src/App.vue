@@ -9,7 +9,7 @@
 </script>
 
 <template>
-  <Navbar v-if="$route.name !== 'login' && $route.name !== 'signup'"/>
+  <Navbar v-if="$route.name !== 'login' && $route.name !== 'signup' && $route.name !== 'create-course'" />
   <router-view />
 </template>
 
