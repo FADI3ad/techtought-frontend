@@ -1,4 +1,3 @@
-<script setup></script>
 <template>
   <footer class="bg-white border-t border-gray-100 pt-16 pb-8">
     <div class="max-w-[1340px] mx-auto px-6 lg:px-10">

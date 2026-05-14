@@ -25,7 +25,7 @@ const isAdmin = computed(() => {
 
 async function loadCategories() {
   try {
-    const res = await api.get("categories/navbar");
+    const res = await api.get("categories");
     categories.value = res.data.data.categories;
   } catch (error) {
     console.error("Error loading categories:", error);
@@ -279,7 +279,7 @@ watch(
     </div>
 
     <!-- ════════ Bottom Bar ════════ -->
-    <div class="max-w-[1340px] mx-auto px-2 md:px-4" v-if="auth.isLoggedIn">
+    <div class="max-w-[1340px] mx-auto px-2 md:px-4">
       <div class="flex items-center relative group">
         <!-- Scroll left -->
         <button
