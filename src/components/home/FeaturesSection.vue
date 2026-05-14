@@ -19,7 +19,7 @@
         <div class="group p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 flex flex-col items-center text-center">
           <div class="w-20 h-20 mb-6 p-4 rounded-xl group-hover:bg-blue-100 transition-colors duration-300">
             <img
-              src="../assets/images/main3.png"
+              src="../../assets/images/main3.png"
               alt="Instructours"
               class="w-full h-full object-contain transform group-hover:scale-110 transition-transform" />
           </div>
@@ -33,7 +33,7 @@
         <div class="group p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-300 flex flex-col items-center text-center">
           <div class="w-20 h-20 mb-6 p-4 rounded-xl group-hover:bg-indigo-100 transition-colors duration-300">
             <img
-              src="../assets/images/main.png"
+              src="../../assets/images/main.png"
               alt="Courses"
               class="w-full h-full object-contain transform group-hover:scale-110 transition-transform" />
           </div>
@@ -47,7 +47,7 @@
         <div class="group p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-300 flex flex-col items-center text-center">
           <div class="w-20 h-20 mb-6 p-4 rounded-xl group-hover:bg-blue-100 transition-colors duration-300">
             <img
-              src="../assets/images/main2.png"
+              src="../../assets/images/main2.png"
               alt="Todo"
               class="w-full h-full object-contain transform group-hover:scale-110 transition-transform" />
           </div>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import api from "../api/axios";
+import api from "../../services/axios";
 
 const formData = ref({
   name: "",

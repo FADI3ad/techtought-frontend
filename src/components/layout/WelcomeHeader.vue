@@ -1,5 +1,5 @@
 <script setup>
-  import { useAuthStore } from "../stores/authStore";
+  import { useAuthStore } from "../../stores/useAuthStore";
   const authStore = useAuthStore();
 </script>
 
@@ -9,7 +9,7 @@
       <div class="flex items-center gap-6">
         <div class="relative">
           <img
-            src="../assets/images/user.png"
+            src="../../assets/images/user.png"
             alt="User"
             class="w-16 h-16 rounded-full object-cover" />
           <div

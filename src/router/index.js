@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../stores/useAuthStore";
 
 // 1. Guest Views
-import HomeGuest from "../views/HomeGuest.vue";
-import Login from "../views/auth/Login.vue";
-import SignUp from "../views/auth/Signup.vue";
-import InstructorApplication from "../views/InstructorApplication.vue";
+import HomeGuest from "../views/Home/HomeGuest.vue";
+import Login from "../views/Auth/Login.vue";
+import SignUp from "../views/Auth/Signup.vue";
+import InstructorApplication from "../views/Instructor/InstructorApplication.vue";
 
 // 2. Auth/Student Views
-import HomeAuth from "../views/HomeAuth.vue";
-import CategoryCourses from "../views/CategoryCourses.vue";
+import HomeAuth from "../views/Home/HomeAuth.vue";
+import CategoryCourses from "../views/Course/CategoryCourses.vue";
 
 const routes = [
   // =========================================================================
@@ -64,13 +64,13 @@ const routes = [
   {
     path: "/course/:slug",
     name: "course-details",
-    component: () => import("../views/CourseDetails.vue"),
-    meta: { requiresAuth: true },
+    component: () => import("../views/Course/CourseDetails.vue"),
+    meta: { requiresAuth: false },
   },
   {
     path: "/course/:slug/learn",
     name: "course-lesson",
-    component: () => import("../views/CourseLessons.vue"),
+    component: () => import("../views/Course/CourseLessons.vue"),
     meta: { requiresAuth: true },
   },
 
@@ -86,7 +86,7 @@ const routes = [
   {
     path: "/instructor/create-course",
     name: "create-course",
-    component: () => import("../views/InstructorCreateCourse.vue"),
+    component: () => import("../views/Instructor/InstructorCreateCourse.vue"),
     meta: { requiresAuth: true, role: "instructor" },
   },
 
@@ -96,7 +96,7 @@ const routes = [
   {
     path: "/admin/dashboard",
     name: "admin-dashboard",
-    component: () => import("../views/AdminDashboard.vue"),
+    component: () => import("../views/Admin/AdminDashboard.vue"),
     meta: { requiresAuth: true, role: "admin" },
   },
 ];

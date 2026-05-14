@@ -1,9 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "../stores/authStore";
-import api from "../api/axios";
-import axios from "axios";
+import { useAuthStore } from "../../stores/useAuthStore";
+import api from "../../services/axios";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -92,11 +91,7 @@ const scroll = (direction) => {
 const logout = async () => {
   try {
     if (auth.user?.token)
-      await axios.post(
-        "/api/logout",
-        {},
-        { headers: { Authorization: `Bearer ${auth.user.token}` } },
-      );
+      await api.post("/logout");
   } catch (err) {
     console.error("Logout API error:", err);
   } finally {
@@ -147,7 +142,7 @@ watch(
       <div
         class="text-2xl md:text-3xl font-bold tracking-tight text-black flex-shrink-0">
         <router-link to="/"
-          ><img src="../assets/images/Group 13.png" alt="Logo"
+          ><img src="../../assets/images/Group 13.png" alt="Logo"
         /></router-link>
       </div>
 
@@ -215,7 +210,7 @@ watch(
               <div
                 class="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-blue-500 transition-all">
                 <img
-                  src="../assets/images/user.png"
+                  src="../../assets/images/user.png"
                   alt="Profile"
                   class="w-full h-full object-cover" />
               </div>

@@ -1,8 +1,8 @@
 <script setup>
   import { ref, computed, onMounted, onUnmounted } from "vue";
-  import nodeIcon from "../assets/images/cpp.png";
-  import reactIcon from "../assets/images/flutter.png";
-  import mongoIcon from "../assets/images/js.png";
+  import nodeIcon from "../../assets/images/cpp.png";
+  import reactIcon from "../../assets/images/flutter.png";
+  import mongoIcon from "../../assets/images/js.png";
 
   const iconData = [
     { img: nodeIcon, label: "Node.js" },

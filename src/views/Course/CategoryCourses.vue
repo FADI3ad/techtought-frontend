@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
-import api from "../api/axios";
+import { useRoute, useRouter } from "vue-router";
+import api from "../../services/axios";
 
 const route = useRoute();
+const router = useRouter();
 
 const category     = ref(null); // courses + meta  (all-courses endpoint)
 const categoryInfo = ref(null); // name + description + image  (single endpoint)
@@ -195,6 +196,7 @@ function filteredCourses() {
             <!-- Real cards -->
             <template v-else>
               <div v-for="course in filteredCourses()" :key="course.id"
+                @click="router.push({ name: 'course-details', params: { slug: course.slug } })"
                 class="flex flex-col md:flex-row bg-white border border-gray-100 rounded-2xl
                        overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer">
 

@@ -1,14 +1,21 @@
 <script setup>
+  import { useRouter } from "vue-router";
+  const router = useRouter();
+
   const props = defineProps({
     course: {
       type: Object,
       required: true,
     },
   });
+
+  const goToDetails = () => {
+    router.push({ name: "course-details", params: { slug: props.course.slug } });
+  };
 </script>
 
 <template>
-  <div class="course-inner cursor-pointer flex flex-col h-full group">
+  <div @click="goToDetails" class="course-inner cursor-pointer flex flex-col h-full group">
     
     <div
       class="relative aspect-video overflow-hidden rounded-xl mb-4 shadow-sm transition-shadow duration-300 bg-gray-100">

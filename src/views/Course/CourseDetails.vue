@@ -1,0 +1,79 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import api from "../../services/axios";
+
+// Components
+import CourseHero from "../../components/courses/details/CourseHero.vue";
+import CourseSidebar from "../../components/courses/details/CourseSidebar.vue";
+import CourseDescription from "../../components/courses/details/CourseDescription.vue";
+import Footer from "../../components/layout/Footer.vue";
+
+const route = useRoute();
+const course = ref(null);
+const loading = ref(true);
+const error = ref(null);
+
+async function getCourse() {
+  try {
+    loading.value = true;
+    const slug = route.params.slug;
+    
+    const response = await api.get(`/courses/${slug}`);
+    course.value = response.data.data.course;
+  } catch (err) {
+    console.error("Error fetching course:", err);
+    error.value = "Failed to load course data. Please try again later.";
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  getCourse();
+});
+</script>
+
+<template>
+  <div class="min-h-screen bg-white">
+    <!-- Loading State -->
+    <div v-if="loading" class="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+      <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+      <p class="text-gray-500 font-medium animate-pulse">Loading course details...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
+      <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ error }}</h2>
+      <button @click="getCourse" class="mt-4 text-indigo-600 font-bold hover:underline">Try Again</button>
+    </div>
+
+    <!-- Content -->
+    <div v-else-if="course">
+      <CourseHero :course="course" />
+
+      <section class="pb-24 pt-12 lg:pt-0">
+        <div class="max-w-[1340px] mx-auto px-6 lg:px-10">
+          <div class="flex flex-col lg:flex-row gap-12 lg:gap-16">
+            <!-- Main Column -->
+            <div class="flex-grow">
+              <CourseDescription :course="course" />
+            </div>
+
+            <!-- Sidebar Column -->
+            <CourseSidebar :course="course" />
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <Footer />
+  </div>
+</template>
+
+<style scoped>
+
+</style>

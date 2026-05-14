@@ -1,11 +1,6 @@
 <script setup>
   import { ref, computed, onMounted, watch } from "vue";
-  import axios from "axios";
-
-  // ─── API ───────────────────────────────────────────────────────────────
-  const api = axios.create({
-    baseURL: "http://127.0.0.1:8000/api",
-  });
+  import api from "../../services/axios";
 
   // ─── Form State ───────────────────────────────────────────────────────
   const form = ref({

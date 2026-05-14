@@ -1,6 +1,6 @@
 <script setup>
   import { ref, onMounted } from "vue";
-  import api from "../api/axios";
+  import api from "../../services/axios";
   import CourseCard from "./CourseCard.vue";
 
   const tabs = ref([]);

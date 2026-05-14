@@ -1,7 +1,7 @@
 <script setup>
   import { computed, onMounted, reactive, ref } from "vue";
-  import api from "../api/axios";
-  import { useAuthStore } from "../stores/authStore";
+  import api from "../../services/axios";
+  import { useAuthStore } from "../../stores/useAuthStore";
 
   const auth = useAuthStore();
   const adminName = computed(() => auth.user?.name || "Admin");

@@ -1,8 +1,9 @@
 <script setup>
-  import { ref } from "vue";
-  import axios from "axios";
+  import { ref, computed } from "vue";
+  import api from "../../services/axios";
   import { useRouter } from "vue-router";
-  import { useAuthStore } from "../../stores/authStore";
+  import { useAuthStore } from "../../stores/useAuthStore";
+  import AuthInput from "../../components/common/AuthInput.vue";
 
   const router = useRouter();
   const authStore = useAuthStore();
@@ -16,27 +17,43 @@
   const loading = ref(false);
   const serverError = ref("");
 
-  const handleSubmit = async () => {
+  const validate = () => {
     errors.value = {};
+    let isValid = true;
+
+    if (!form.value.email) {
+      errors.value.email = ["Email is required"];
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
+      errors.value.email = ["Invalid email format"];
+      isValid = false;
+    }
+
+    if (!form.value.password) {
+      errors.value.password = ["Password is required"];
+      isValid = false;
+    } else if (form.value.password.length < 8) {
+      errors.value.password = ["Password must be at least 8 characters"];
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+
     serverError.value = "";
     loading.value = true;
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/login",
-        {
-          email: form.value.email,
-          password: form.value.password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-      );
+      const response = await api.post("/login", {
+        email: form.value.email,
+        password: form.value.password,
+      });
 
       authStore.login(response.data.data.user);
+      localStorage.setItem("token", response.data.data.token);
       router.push("/dashboard");
     } catch (error) {
       loading.value = false;
@@ -78,39 +95,34 @@
         <h2 class="sig">Sign in to TechTought</h2>
 
         <!-- Server Error -->
-        <div v-if="serverError" class="server-error">
-          {{ serverError }}
-        </div>
+        <Transition name="fade">
+          <div v-if="serverError" class="server-error">
+            {{ serverError }}
+          </div>
+        </Transition>
 
         <form class="form-container" @submit.prevent="handleSubmit">
-          <!-- Email -->
-          <div class="form-group">
-            <label>Email*</label>
-            <input
-              v-model="form.email"
-              type="email"
-              placeholder="Your email"
-              :class="{ 'input-error': errors.email }" />
-            <span v-if="errors.email" class="error-msg">{{
-              errors.email[0]
-            }}</span>
-          </div>
+          <AuthInput
+            v-model="form.email"
+            id="email"
+            type="email"
+            label="Email"
+            placeholder="Your email"
+            required
+            :error="errors.email?.[0]" />
 
-          <!-- Password -->
-          <div class="form-group">
-            <label>Password*</label>
-            <input
-              v-model="form.password"
-              type="password"
-              placeholder="Must be at least 8 characters."
-              :class="{ 'input-error': errors.password }" />
-            <span v-if="errors.password" class="error-msg">{{
-              errors.password[0]
-            }}</span>
-          </div>
+          <AuthInput
+            v-model="form.password"
+            id="password"
+            type="password"
+            label="Password"
+            placeholder="Must be at least 8 characters."
+            required
+            :error="errors.password?.[0]" />
 
           <!-- Submit -->
           <button type="submit" class="submit-btn" :disabled="loading">
+            <span v-if="loading" class="loader"></span>
             {{ loading ? "Signing in..." : "Login" }}
           </button>
 
@@ -127,62 +139,42 @@
 </template>
 <style scoped>
   /* ===== Layout Structure ===== */
-
   .sign {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
     min-height: 100vh;
     width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   }
 
-  .signin,
+  .signin {
+    background: radial-gradient(circle at bottom, #61dafb -150%, #020103 70%, #020103 10%);
+    color: white;
+    padding: 80px 15px;
+    width: 50%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .signin-right {
-    width: 100%;
+    width: 50%;
+    padding: 40px 80px;
+    background-color: #f6f8fa;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .inner {
     width: 100%;
-    max-width: 670px;
+    max-width: 440px;
     margin: 0 auto;
   }
 
-  .left-inner {
-    padding: 80px 40px;
-    position: relative;
-  }
-
-  .right-inner {
-    padding: 40px 40px;
-  }
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  .sign {
-    display: flex;
-    min-height: 100vh;
-    font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
-      sans-serif;
-  }
-
-  .signin {
-    background: radial-gradient(
-      circle at bottom,
-      #61dafb -150%,
-      #020103 70%,
-      #020103 10%
-    );
-    color: white;
-    padding: 80px 15px;
-    width: 50%;
-
-    position: relative;
-    overflow: hidden;
-  }
-
+  /* Stars Animation */
   .stars {
     position: absolute;
     top: 0;
@@ -192,81 +184,21 @@
     pointer-events: none;
   }
 
-  .stars::before,
-  .stars::after {
+  .stars::before {
     content: "";
     position: absolute;
     width: 2px;
     height: 2px;
     background: white;
     border-radius: 50%;
-    box-shadow:
-      20px 40px 0 0 white,
-      80px 100px 0 0 white,
-      150px 60px 0 0 white,
-      300px 150px 0 0 white,
-      250px 50px 0 0 white,
-      100px 200px 0 0 white,
-      350px 250px 0 0 white,
-      180px 180px 0 0 white,
-      280px 80px 0 0 white,
-      50px 300px 0 0 white,
-      320px 350px 0 0 white,
-      200px 120px 0 0 white,
-      400px 200px 0 0 white,
-      120px 400px 0 0 white,
-      380px 450px 0 0 white,
-      220px 320px 0 0 white,
-      340px 180px 0 0 white,
-      90px 150px 0 0 white,
-      270px 420px 0 0 white,
-      160px 280px 0 0 white,
-      410px 320px 0 0 white,
-      60px 500px 0 0 white,
-      310px 520px 0 0 white,
-      190px 460px 0 0 white,
-      420px 100px 0 0 white,
-      140px 50px 0 0 rgba(255, 255, 255, 0.5),
-      360px 400px 0 0 rgba(255, 255, 255, 0.5),
-      240px 240px 0 0 rgba(255, 255, 255, 0.5),
-      70px 380px 0 0 rgba(255, 255, 255, 0.5),
-      390px 280px 0 0 rgba(255, 255, 255, 0.5);
+    box-shadow: 20px 40px 0 0 white, 80px 100px 0 0 white, 150px 60px 0 0 white, 300px 150px 0 0 white, 250px 50px 0 0 white, 100px 200px 0 0 white, 350px 250px 0 0 white, 180px 180px 0 0 white, 280px 80px 0 0 white, 50px 300px 0 0 white;
     animation: twinkle 3s infinite alternate;
   }
 
-  .stars::after {
-    width: 1px;
-    height: 1px;
-    box-shadow:
-      40px 80px 0 0 rgba(255, 255, 255, 0.6),
-      120px 140px 0 0 rgba(255, 255, 255, 0.6),
-      200px 90px 0 0 rgba(255, 255, 255, 0.6),
-      330px 190px 0 0 rgba(255, 255, 255, 0.6),
-      280px 120px 0 0 rgba(255, 255, 255, 0.6),
-      130px 250px 0 0 rgba(255, 255, 255, 0.6),
-      370px 300px 0 0 rgba(255, 255, 255, 0.6),
-      210px 210px 0 0 rgba(255, 255, 255, 0.6),
-      300px 110px 0 0 rgba(255, 255, 255, 0.6),
-      80px 330px 0 0 rgba(255, 255, 255, 0.6),
-      340px 380px 0 0 rgba(255, 255, 255, 0.6),
-      230px 150px 0 0 rgba(255, 255, 255, 0.6),
-      430px 230px 0 0 rgba(255, 255, 255, 0.6),
-      150px 430px 0 0 rgba(255, 255, 255, 0.6),
-      400px 480px 0 0 rgba(255, 255, 255, 0.6),
-      250px 350px 0 0 rgba(255, 255, 255, 0.6);
-    animation: twinkle 4s infinite alternate-reverse;
-  }
-
   @keyframes twinkle {
-    0% {
-      opacity: 0.3;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.4;
-    }
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
   }
 
   .signin-left {
@@ -275,7 +207,6 @@
     margin-bottom: 20px;
     line-height: 1.25;
     letter-spacing: -0.5px;
-    position: relative;
     z-index: 1;
   }
 
@@ -283,21 +214,12 @@
     font-size: 18px;
     color: rgba(255, 255, 255, 0.7);
     line-height: 1.5;
-    position: relative;
     z-index: 1;
-  }
-
-  .signin-right {
-    width: 50%;
-    padding: 40px 80px;
-    background-color: #f6f8fa;
-    overflow-y: auto;
   }
 
   .already-have-account {
     text-align: right;
     font-size: 14px;
-    font-weight: 400;
     margin-bottom: 40px;
     color: #57606a;
   }
@@ -306,10 +228,6 @@
     color: #0969da;
     text-decoration: none;
     font-weight: 500;
-  }
-
-  .already-have-account a:hover {
-    text-decoration: underline;
   }
 
   .sig {
@@ -322,78 +240,7 @@
   .form-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .form-group label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1f2328;
-  }
-
-  .form-group input,
-  .form-group select {
-    padding: 12px 14px;
-    border-radius: 6px;
-    border: 1px solid #d0d7de;
-    font-size: 14px;
-    background-color: white;
-    transition: all 0.2s;
-  }
-
-  .form-group input:focus,
-  .form-group select:focus {
-    outline: none;
-    border-color: #0969da;
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
-  }
-
-  .form-group input::placeholder {
-    color: #6e7781;
-  }
-
-  .form-group select {
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236e7781' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 40px;
-  }
-
-  .checkbox-group {
-    margin-top: 8px;
-  }
-
-  .checkbox-group h5 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #1f2328;
-  }
-
-  .checkbox-label {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 14px;
-    color: #1f2328;
-    cursor: pointer;
-    line-height: 1.5;
-  }
-
-  .checkbox-label input[type="checkbox"] {
-    margin-top: 3px;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
+    gap: 24px;
   }
 
   .submit-btn {
@@ -406,26 +253,39 @@
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    margin-top: 8px;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
 
-  .submit-btn:hover {
+  .submit-btn:hover:not(:disabled) {
     background-color: #2a2c36;
+    transform: translateY(-1px);
   }
 
-  .submit-btn:active {
-    background-color: #2a2c36;
+  .submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 
-  .terms {
-    margin-top: 8px;
+  .server-error {
+    background-color: #ffebe9;
+    border: 1px solid rgba(207, 34, 46, 0.2);
+    color: #cf222e;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 24px;
+    font-weight: 500;
   }
 
   .terms p {
     font-size: 12px;
     color: #57606a;
     line-height: 1.6;
+    margin-top: 16px;
   }
 
   .terms a {
@@ -433,55 +293,42 @@
     text-decoration: none;
   }
 
-  .terms a:hover {
-    text-decoration: underline;
+  /* Loader */
+  .loader {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ffffff;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Animations */
+  .fade-enter-active, .fade-leave-active {
+    transition: all 0.3s ease;
+  }
+  .fade-enter-from, .fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 
   @media (max-width: 1024px) {
-    .signin-right {
-      padding: 40px 50px;
-    }
-
-    .signin {
-      padding: 60px 40px;
-    }
+    .signin-right { padding: 40px 50px; }
+    .signin { padding: 60px 40px; }
   }
 
   @media (max-width: 768px) {
-    .sign {
-      flex-direction: column;
-    }
-
-    .signin,
-    .signin-right {
-      width: 100%;
-    }
-
-    .signin {
-      min-height: 300px;
-      padding: 40px 30px;
-    }
-
-    .signin-left {
-      font-size: 36px;
-    }
-
-    .signin-right {
-      padding: 30px;
-    }
-  }
-  .logo {
-    justify-content: center;
-    text-align: center;
-    align-items: center;
-    display: flex;
-    padding: 130px;
-  }
-  .logo li {
-    list-style: none;
-  }
-  .logo ul {
-    display: flex;
-    gap: 20px;
+    .sign { flex-direction: column; }
+    .signin, .signin-right { width: 100%; }
+    .signin { min-height: 300px; padding: 40px 30px; }
+    .signin-left { font-size: 36px; }
+    .signin-right { padding: 30px; }
   }
 </style>
+

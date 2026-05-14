@@ -1,9 +1,9 @@
 <script setup>
   import { ref, onMounted } from "vue";
-  import WelcomeHeader from "../components/WelcomeHeader.vue";
-  import CourseCarousel from "../components/CourseCarousel.vue";
-  import Footer from "../components/Footer.vue";
-  import api from "../api/axios";
+  import WelcomeHeader from "../../components/layout/WelcomeHeader.vue";
+  import CourseCarousel from "../../components/courses/CourseCarousel.vue";
+  import Footer from "../../components/layout/Footer.vue";
+  import api from "../../services/axios";
 
   const trendingCourses = ref([]);
   const fundamentalsCourses = ref([]);

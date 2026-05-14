@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import api from "../../services/axios";
 
 // ─── State ─────────────────────────────────────────
 const expandedSection = ref(null);
@@ -18,8 +18,8 @@ const route = useRoute();
 // ─── API ─────────────────────────────────────────
 const fetchCourse = async () => {
   try {
-    const res = await axios.get(
-      `http://127.0.0.1:8000/api/courses/${route.params.slug}/sections`
+    const res = await api.get(
+      `/courses/${route.params.slug}/sections`
     );
 
     course.value = res.data.data;
