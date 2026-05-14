@@ -54,6 +54,12 @@ const routes = [
     component: () => import("../views/CourseLessons.vue"),
     meta: { requiresAuth: false },
   },
+  {
+    path: "/admin/dashboard",
+    name: "admin-dashboard",
+    component: () => import("../views/AdminDashboard.vue"),
+    meta: { requiresAuth: false, requiresAdmin: false },
+  },
 ];
 
 const router = createRouter({
@@ -63,8 +69,11 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore();
+  const role = auth.user?.role;
+  const isAdmin = role === "admin" || role === "super_admin";
 
   if (to.meta.requiresAuth && !auth.isLoggedIn) next("/login");
+  else if (to.meta.requiresAdmin && !isAdmin) next("/dashboard");
   else if (to.meta.guest && auth.isLoggedIn) next("/dashboard");
   else next();
 });

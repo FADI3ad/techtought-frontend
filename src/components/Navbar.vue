@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import api from "../api/axios";
@@ -18,6 +18,10 @@ const subcategories = ref([]);
 const activeSlug = ref(null);
 const activeName = ref(null);
 const loadingSubcategories = ref(false);
+const isAdmin = computed(() => {
+  const role = auth.user?.role;
+  return role === "admin" || role === "super_admin";
+});
 
 async function loadCategories() {
   try {
@@ -229,6 +233,12 @@ watch(
                 </p>
               </div>
               <div class="py-1">
+                <router-link
+                  v-if="isAdmin"
+                  to="/admin/dashboard"
+                  class="dropdown-item"
+                  >Admin Dashboard</router-link
+                >
                 <router-link to="/profile" class="dropdown-item"
                   >My Profile</router-link
                 >
