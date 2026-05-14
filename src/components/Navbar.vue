@@ -114,7 +114,7 @@ watch(
 </script>
 <template>
   <nav
-    class="w-full bg-white border-b border-gray-200 font-sans sticky top-0 z-50">
+    class="w-full bg-white border-b border-gray-200 font-sans  top-0 z-50">
     <!-- ════════ Nav Top ════════ -->
     <div
       class="flex items-center justify-between h-[70px] md:h-[80px] gap-4 md:gap-8 border-b border-gray-200 px-4 md:px-12">
@@ -143,7 +143,7 @@ watch(
       <div
         class="text-2xl md:text-3xl font-bold tracking-tight text-black flex-shrink-0">
         <router-link to="/"
-          ><img src="../assets/images/logo.png" alt="Logo"
+          ><img src="../assets/images/Group 13.png" alt="Logo"
         /></router-link>
       </div>
 

@@ -40,7 +40,6 @@
       const angleRad = (angleDeg * Math.PI) / 180;
       return {
         ...item,
-
         x: (cx + R * Math.cos(angleRad)) * scale,
         y: (cy + R * Math.sin(angleRad)) * scale,
       };
@@ -79,7 +78,6 @@
   async function getCategoryCoursesAndImages(slug) {
     try {
       const response = await api.get(`categories/${slug}/courses`);
-
       category.value = response.data.data.category;
       courses.value = response.data.data.category.courses;
     } catch (error) {
@@ -147,7 +145,7 @@
   <div class="overflow-hidden">
     <!-- Hero  -->
     <section
-      class="relative pt-32 pb-0 bg-gradient-to-r from-white via-[#efefff] to-[#0800FF] overflow-hidden ">
+      class="relative pt-32 pb-0 bg-gradient-to-r from-white via-[#efefff] to-[#0800FF] overflow-hidden">
       <div
         class="max-w-[1340px] mx-auto px-6 lg:px-10 flex flex-col lg:flex-row items-start justify-between">
         <div class="flex-1 z-10 text-center lg:text-left lg:mb-0">
@@ -231,29 +229,15 @@
 
         <div class="flex flex-col lg:flex-row gap-10 items-start">
           <div class="w-full lg:w-1/3 flex justify-center">
-            <div
-              class="relative w-[280px] h-[580px] border-[8px] border-black rounded-[3rem] shadow-2xl overflow-hidden bg-white">
-              <div class="p-4">
-                <div class="w-12 h-1 bg-gray-200 mx-auto mb-6 rounded"></div>
-                <div class="bg-indigo-50 p-4 rounded-2xl mb-4">
-                  <p class="text-[10px] font-bold text-indigo-600 uppercase">
-                    Updates this week
-                  </p>
-                  <h4 class="text-sm font-bold mt-1">
-                    Ultimate collection for creativity & productivity
-                  </h4>
-                  <button
-                    class="mt-3 bg-white text-[10px] px-3 py-1 rounded-full shadow-sm border border-gray-100">
-                    Subscribe for Free
-                  </button>
+            <div class="grid grid-cols-2 gap-2">
+              <template v-if="category?.image">
+                <div class="col-span-2 h-[400px] rounded-lg overflow-hidden">
+                  <img
+                    :src="category.image"
+                    :alt="category.name"
+                    class="w-full h-full object-cover object-center" />
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div
-                    v-for="i in 4"
-                    :key="i"
-                    class="h-24 bg-gray-100 rounded-lg animate-pulse"></div>
-                </div>
-              </div>
+              </template>
             </div>
           </div>
 
@@ -350,69 +334,140 @@
       </div>
     </section>
 
-    <!-- Daily Tasks -->
-    <section class="py-20 bg-white">
+    <!-- Daily Tasks Section - Updated to TechTought Style -->
+    <!-- Daily Tasks Section - المطور بألوان Dark Mode احترافية -->
+    <section class="py-24 bg-[#0f172a] overflow-hidden relative">
+      <!-- تأثيرات إضاءة خلفية (Glow Effects) لإعطاء عمق للمكان -->
       <div
-        class="max-w-[1340px] mx-auto px-6 lg:px-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+        class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]"></div>
+      <div
+        class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px]"></div>
+
+      <div
+        class="max-w-[1340px] mx-auto px-6 lg:px-10 flex flex-col lg:flex-row items-center justify-between gap-16 relative z-10">
+        <!-- Left Content -->
         <div class="w-full lg:w-1/2 text-center lg:text-left">
+          <span
+            class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wide text-blue-400 uppercase bg-blue-500/10 rounded-full border border-blue-500/20">
+            Interactive Learning
+          </span>
           <h2
-            class="text-3xl lg:text-4xl font-bold text-gray-900 mb-2 tracking-tight drop-shadow-sm">
-            Daily Tasks
+            class="text-4xl lg:text-6xl font-black text-white tracking-tighter leading-tight mb-6">
+            Daily
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400"
+              >Coding</span
+            >
+            Tasks
           </h2>
+
           <p
-            class="text-gray-600 text-lg lg:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0 mb-8">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestias
-            exercitationem natus quasi ullam nostrum odio praesentium iste
-            suscipit voluptate aliquam. Excepturi ex quibusdam dolorum
-            praesentium soluta tempora fugit numquam ipsum! Temporibus sequi
+            class="text-slate-400 text-lg lg:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10">
+            Master logic through daily challenges. Write your code in the
+            sandbox, test your knowledge, and level up your engineering skills.
           </p>
 
-          <div class="flex items-center justify-center lg:justify-start gap-4">
+          <div
+            class="flex flex-wrap items-center justify-center lg:justify-start gap-6">
             <button
               @click="checkCode"
-              class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">
-              Run Code
+              class="bg-blue-600 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/20 active:scale-95 flex items-center gap-3 group">
+              <span>Run Code</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
             </button>
-            <p
-              v-if="status === 'success'"
-              class="text-green-600 font-bold animate-bounce">
-              Excellent!
-            </p>
-            <p v-if="status === 'error'" class="text-red-500 font-bold">
-              Try again!
-            </p>
+
+            <!-- Dynamic Status Message -->
+            <div class="h-12 flex items-center">
+              <transition name="fade">
+                <p
+                  v-if="status === 'success'"
+                  class="text-emerald-400 font-bold flex items-center gap-2 px-6 py-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 backdrop-blur-md">
+                  <span class="text-xl">✨</span> Brilliant! Correct Logic.
+                </p>
+                <p
+                  v-else-if="status === 'error'"
+                  class="text-rose-400 font-bold flex items-center gap-2 px-6 py-3 bg-rose-500/10 rounded-xl border border-rose-500/20 backdrop-blur-md">
+                  <span class="text-xl">⚠️</span> Check your brackets!
+                </p>
+              </transition>
+            </div>
           </div>
         </div>
 
-        <div class="w-full lg:w-1/2 flex justify-center lg:justify-end">
+        <!-- Right Side: Professional Code Editor -->
+        <div class="w-full lg:w-1/2 relative group">
+          <!-- البرواز المضيء حول المحرر -->
           <div
-            class="w-full max-w-[550px] bg-[#1e1e2e] rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
+            class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-[2.1rem] opacity-20 group-hover:opacity-40 blur transition duration-1000"></div>
+
+          <div
+            class="relative w-full max-w-[580px] bg-[#020617] rounded-[2rem] shadow-2xl overflow-hidden border border-white/5">
+            <!-- Editor Toolbar -->
             <div
-              class="bg-[#252539] px-4 py-3 flex items-center justify-between">
+              class="bg-slate-900/90 backdrop-blur-md px-6 py-4 flex items-center justify-between border-b border-white/5">
               <div class="flex gap-2">
-                <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-                <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-                <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                <div
+                  class="w-3.5 h-3.5 rounded-full bg-[#ff5f56] shadow-inner"></div>
+                <div
+                  class="w-3.5 h-3.5 rounded-full bg-[#ffbd2e] shadow-inner"></div>
+                <div
+                  class="w-3.5 h-3.5 rounded-full bg-[#27c93f] shadow-inner"></div>
               </div>
-              <span class="text-gray-400 text-xs font-mono">index.tsx</span>
+              <div
+                class="bg-white/5 px-3 py-1 rounded-md border border-white/10">
+                <span class="text-blue-400 text-xs font-mono font-medium"
+                  >solution.cpp</span
+                >
+              </div>
             </div>
 
-            <div class="relative">
-              <textarea
-                v-model="userCode"
-                @keydown.enter.prevent="checkCode"
-                class="w-full h-[300px] bg-transparent text-[#c3e88d] p-6 font-mono text-sm outline-none resize-none leading-relaxed"
-                spellcheck="false"></textarea>
-
+            <!-- Textarea & Line Numbers -->
+            <div class="flex bg-transparent">
               <div
-                v-if="status === 'success'"
-                class="absolute inset-0 bg-green-500/10 pointer-events-none border-2 border-green-500 rounded-b-2xl"></div>
+                class="w-12 pt-8 text-right pr-4 select-none text-slate-700 font-mono text-sm border-r border-white/5">
+                1<br />2<br />3<br />4<br />5<br />6
+              </div>
+
+              <div class="relative flex-1">
+                <textarea
+                  v-model="userCode"
+                  class="w-full h-[320px] bg-transparent text-blue-50 p-8 font-mono text-base outline-none resize-none leading-relaxed caret-blue-500 selection:bg-blue-500/30"
+                  spellcheck="false"></textarea>
+
+                <!-- Success Overlay -->
+                <transition name="fade">
+                  <div
+                    v-if="status === 'success'"
+                    class="absolute inset-0 bg-emerald-500/5 pointer-events-none border-l-4 border-emerald-500 transition-all duration-500"></div>
+                </transition>
+              </div>
+            </div>
+
+            <!-- Footer Bar -->
+            <div
+              class="bg-slate-900/80 px-6 py-3 flex justify-end gap-6 text-[11px] text-slate-500 font-mono border-t border-white/5">
+              <div class="flex items-center gap-1">
+                <span
+                  class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                Live Compiler
+              </div>
+              <span>UTF-8</span>
             </div>
           </div>
         </div>
       </div>
     </section>
-
     <!-- Reviews -->
     <section class="py-20 bg-[#f9fafb]">
       <div class="max-w-[1340px] mx-auto px-6 lg:px-10">
@@ -496,7 +551,11 @@
         <div
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div class="space-y-6">
-            <div class="text-3xl font-bold tracking-tight text-black">LOGO</div>
+            <div class="text-3xl font-bold tracking-tight text-black">
+              <router-link to="/"
+                ><img src="../assets/images/Group 13.png" alt="Logo"
+              /></router-link>
+            </div>
             <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
               TechTought is a leading platform for mastering modern technology.
               We help developers build a strong foundation and scale their
@@ -641,4 +700,10 @@
   textarea::selection {
     background: rgba(255, 255, 255, 0.1);
   }
+  .fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>

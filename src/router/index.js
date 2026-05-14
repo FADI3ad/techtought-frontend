@@ -42,10 +42,16 @@ const routes = [
     component: () => import("../views/InstructorCreateCourse.vue"),
     meta: { requiresAuth: false },
   },
-    {
+  {
     path: "/course/:slug",
     name: "course-details",
     component: () => import("../views/CourseDetails.vue"),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/course/:slug/learn",
+    name: "course-lesson",
+    component: () => import("../views/CourseLessons.vue"),
     meta: { requiresAuth: false },
   },
 ];

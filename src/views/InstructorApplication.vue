@@ -11,7 +11,7 @@ const formData = ref({
   cv_link: null,
   national_id_front_image: null,
   national_id_back_image: null,
-  experience_years: "", // جعلتها سلسلة نصية فارغة ليتوافق مع الـ Placeholder
+  experience_years: "",
 });
 
 const status = ref("idle"); // idle | loading | success | error
