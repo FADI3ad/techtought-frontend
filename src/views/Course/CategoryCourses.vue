@@ -6,8 +6,8 @@ import api from "../../services/axios";
 const route = useRoute();
 const router = useRouter();
 
-const category     = ref(null); // courses + meta  (all-courses endpoint)
-const categoryInfo = ref(null); // name + description + image  (single endpoint)
+const category     = ref(null); 
+const categoryInfo = ref(null); 
 const courses      = ref([]);
 const loading      = ref(true);
 const error        = ref(null);

@@ -19,7 +19,7 @@ const routes = [
     path: "/",
     name: "HomeGuest",
     component: HomeGuest,
-    meta: { guest: true },
+    meta: { guest: false },
   },
   {
     path: "/login",
@@ -68,9 +68,21 @@ const routes = [
     meta: { requiresAuth: false },
   },
   {
+    path: "/my-learning",
+    name: "my-learning",
+    component: () => import("../views/Course/MyCourses.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/course/:slug/learn",
     name: "course-lesson",
     component: () => import("../views/Course/CourseLessons.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/cart",
+    name: "cart",
+    component: () => import("../views/Cart/Cart.vue"),
     meta: { requiresAuth: true },
   },
 
@@ -80,7 +92,19 @@ const routes = [
   {
     path: "/instructor/dashboard",
     name: "instructor-dashboard",
-    component: HomeAuth, // Placeholder View
+    component: () => import("../views/Instructor/InstructorDashboard.vue"),
+    meta: { requiresAuth: true, role: "instructor" },
+  },
+  {
+    path: "/instructor/my-courses",
+    name: "instructor-courses",
+    component: () => import("../views/Instructor/InstructorCourseList.vue"),
+    meta: { requiresAuth: true, role: "instructor" },
+  },
+  {
+    path: "/instructor/my-courses/:slug/content",
+    name: "instructor-course-content",
+    component: () => import("../views/Instructor/InstructorCourseContent.vue"),
     meta: { requiresAuth: true, role: "instructor" },
   },
   {
@@ -97,6 +121,12 @@ const routes = [
     path: "/admin/dashboard",
     name: "admin-dashboard",
     component: () => import("../views/Admin/AdminDashboard.vue"),
+    meta: { requiresAuth: true, role: "admin" },
+  },
+  {
+    path: "/admin/instructor-requests/:slug",
+    name: "instructor-request-details",
+    component: () => import("../views/Admin/InstructorRequestDetails.vue"),
     meta: { requiresAuth: true, role: "admin" },
   },
 ];

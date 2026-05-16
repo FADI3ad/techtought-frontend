@@ -188,7 +188,7 @@
         fd.append("requirements", form.value.requirements);
       if (form.value.image) fd.append("image", form.value.image);
 
-      const { data: courseRes } = await api.post("/courses", fd, {
+      const { data: courseRes } = await api.post("/instructor/courses", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -198,7 +198,7 @@
       for (const section of sections.value) {
         if (!section.name.trim()) continue;
 
-        const { data: secRes } = await api.post("/sections", {
+        const { data: secRes } = await api.post("/instructor/sections", {
           name: section.name,
           course_id: courseId,
         });
@@ -214,7 +214,7 @@
           lfd.append("section_id", sectionId);
           if (lesson.video) lfd.append("video", lesson.video);
 
-          await api.post("/lessons", lfd, {
+          await api.post("/instructor/lessons", lfd, {
             headers: { "Content-Type": "multipart/form-data" },
           });
         }

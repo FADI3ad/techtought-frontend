@@ -2,9 +2,11 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { useCartStore } from "../../stores/useCartStore";
 import api from "../../services/axios";
 
 const auth = useAuthStore();
+const cart = useCartStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -76,8 +78,18 @@ const closeDropdown = (e) => {
 
 onMounted(() => {
   window.addEventListener("click", closeDropdown);
-  loadCategories();
 });
+
+watch(
+  () => auth.isLoggedIn,
+  (isLoggedIn) => {
+    if (isLoggedIn) {
+      loadCategories();
+      cart.fetchCart();
+    }
+  },
+  { immediate: true }
+);
 onUnmounted(() => window.removeEventListener("click", closeDropdown));
 
 const scroll = (direction) => {
@@ -184,8 +196,8 @@ watch(
         </template>
 
         <template v-else>
-          <a href="#" class="hidden sm:block hover:text-blue-600"
-            >My learning</a
+          <router-link to="/my-learning" class="hidden sm:block hover:text-blue-600"
+            >My learning</router-link
           >
 
           <button class="text-gray-400 hover:text-red-500">
@@ -202,6 +214,27 @@ watch(
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
+
+          <!-- Cart Icon -->
+          <router-link to="/cart" class="relative text-gray-400 hover:text-[#1DA1F2] transition-colors">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 md:h-7 md:w-7"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span
+              v-if="cart.cartCount > 0"
+              class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+              {{ cart.cartCount }}
+            </span>
+          </router-link>
 
           <div class="relative profile-dropdown-container">
             <button
@@ -269,12 +302,12 @@ watch(
         <router-link to="/instructor-application" @click="isMenuOpen = false"
           >Teach with TechTought</router-link
         >
-        <a href="#" v-if="auth.isLoggedIn">My learning</a>
+        <router-link to="/my-learning" v-if="auth.isLoggedIn" @click="isMenuOpen = false">My learning</router-link>
       </div>
     </div>
 
     <!-- ════════ Bottom Bar ════════ -->
-    <div class="max-w-[1340px] mx-auto px-2 md:px-4">
+    <div v-if="auth.isLoggedIn" class="max-w-[1340px] mx-auto px-2 md:px-4">
       <div class="flex items-center relative group">
         <!-- Scroll left -->
         <button

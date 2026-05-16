@@ -1,18 +1,49 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/useAuthStore";
 import api from "../../services/axios";
 
 // Components
 import CourseHero from "../../components/courses/details/CourseHero.vue";
 import CourseSidebar from "../../components/courses/details/CourseSidebar.vue";
 import CourseDescription from "../../components/courses/details/CourseDescription.vue";
+import CourseComments from "../../components/courses/details/CourseComments.vue";
 import Footer from "../../components/layout/Footer.vue";
 
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
 const course = ref(null);
 const loading = ref(true);
 const error = ref(null);
+
+async function handleEnroll() {
+  if (!authStore.isLoggedIn) {
+    router.push("/login");
+    return;
+  }
+
+  if (course.value.is_enrolled) {
+    router.push(`/course/${course.value.slug}/learn`);
+    return;
+  }
+
+  if (course.value.is_free) {
+    try {
+      const response = await api.post("/enroll", {
+        course_id: course.value.id,
+      });
+      if (response.data.status === "success") {
+        router.push(`/course/${course.value.slug}/learn`);
+      }
+    } catch (err) {
+      console.error("Enrollment failed:", err);
+    }
+  } else {
+    router.push("/cart");
+  }
+}
 
 async function getCourse() {
   try {
@@ -53,18 +84,19 @@ onMounted(() => {
 
     <!-- Content -->
     <div v-else-if="course">
-      <CourseHero :course="course" />
+      <CourseHero :course="course" @enroll="handleEnroll" />
 
       <section class="pb-24 pt-12 lg:pt-0">
         <div class="max-w-[1340px] mx-auto px-6 lg:px-10">
           <div class="flex flex-col lg:flex-row gap-12 lg:gap-16">
-            <!-- Main Column -->
-            <div class="flex-grow">
-              <CourseDescription :course="course" />
-            </div>
+            <!-- Sidebar Column (Shown first on mobile) -->
+            <CourseSidebar :course="course" class="order-1 lg:order-2" />
 
-            <!-- Sidebar Column -->
-            <CourseSidebar :course="course" />
+            <!-- Main Column (Shown second on mobile) -->
+            <div class="flex-grow order-2 lg:order-1">
+              <CourseDescription :course="course" />
+              <CourseComments :course-id="course.id" :course-slug="course.slug" />
+            </div>
           </div>
         </div>
       </section>

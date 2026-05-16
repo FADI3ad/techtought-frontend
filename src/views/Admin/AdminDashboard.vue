@@ -20,6 +20,10 @@
   const categoryMessage = ref("");
   const subcategoryMessage = ref("");
 
+  const instructorRequests = ref([]);
+  const requestsLoading = ref(false);
+  const requestsError = ref("");
+
   const categoryForm = reactive({
     id: null,
     name: "",
@@ -310,9 +314,47 @@
     await loadSubcategories(slug);
   }
 
+  async function loadInstructorRequests() {
+    requestsLoading.value = true;
+    requestsError.value = "";
+    try {
+      const response = await api.get("/admin/instructor-requests");
+      instructorRequests.value = response?.data?.data?.requests?.data || [];
+    } catch (error) {
+      requestsError.value = "Failed to load instructor requests.";
+    } finally {
+      requestsLoading.value = false;
+    }
+  }
+
+  async function approveRequest(id) {
+    if (!window.confirm("Approve this instructor request?")) return;
+    try {
+      const response = await api.post(`/admin/instructor-requests/${id}/approve`);
+      const password = response?.data?.data?.generated_password;
+      window.alert(`Success! Auto-generated password for the instructor: ${password}`);
+      await loadInstructorRequests();
+    } catch (error) {
+      alert(error?.response?.data?.message || "Failed to approve request.");
+    }
+  }
+
+  async function rejectRequest(id) {
+    const reason = window.prompt("Reason for rejection?", "Your application does not meet our current requirements.");
+    if (reason === null) return; // User cancelled
+
+    try {
+      await api.delete(`/admin/instructor-requests/${id}`, { data: { reason } });
+      await loadInstructorRequests();
+    } catch (error) {
+      alert(error?.response?.data?.message || "Failed to reject request.");
+    }
+  }
+
   onMounted(async () => {
     await loadCategories();
     clearSubcategoryForm();
+    await loadInstructorRequests();
   });
 </script>
 
@@ -604,6 +646,88 @@
               </button>
             </div>
           </form>
+        </article>
+      </section>
+
+      <!-- Instructor Requests Section -->
+      <section class="mt-6">
+        <article class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-extrabold text-[#111827]">Instructor Requests</h2>
+              <p class="text-xs text-gray-500">Manage pending applications for instructor accounts</p>
+            </div>
+            <button
+              type="button"
+              @click="loadInstructorRequests"
+              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-semibold text-sm hover:bg-gray-200 transition-colors">
+              Refresh
+            </button>
+          </div>
+
+          <div v-if="requestsError" class="px-6 pt-4 text-sm font-semibold text-rose-600">
+            {{ requestsError }}
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="text-left px-6 py-3 font-semibold">Name</th>
+                  <th class="text-left px-6 py-3 font-semibold">Email</th>
+                  <th class="text-left px-6 py-3 font-semibold">Country</th>
+                  <th class="text-left px-6 py-3 font-semibold">Status</th>
+                  <th class="text-left px-6 py-3 font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="requestsLoading">
+                  <td class="px-6 py-8 text-gray-400" colspan="5">Loading requests...</td>
+                </tr>
+                <tr v-else-if="instructorRequests.length === 0">
+                  <td class="px-6 py-8 text-gray-400" colspan="5">No pending requests found.</td>
+                </tr>
+                <tr
+                  v-for="req in instructorRequests"
+                  :key="req.id"
+                  class="border-t border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 font-semibold text-gray-800">{{ req.name }}</td>
+                  <td class="px-6 py-4 text-gray-500">{{ req.email }}</td>
+                  <td class="px-6 py-4 text-gray-500">{{ req.country }}</td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="px-2 py-1 rounded text-xs font-bold capitalize"
+                      :class="req.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'">
+                      {{ req.status }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <router-link
+                        :to="{ name: 'instructor-request-details', params: { slug: req.slug } }"
+                        class="px-3 py-1.5 rounded-md text-xs font-bold bg-blue-100 text-blue-700 hover:bg-blue-200"
+                      >
+                        View
+                      </router-link>
+                      <button
+                        v-if="req.status === 'pending'"
+                        type="button"
+                        @click="approveRequest(req.id)"
+                        class="px-3 py-1.5 rounded-md text-xs font-bold bg-emerald-100 text-emerald-700 hover:bg-emerald-200">
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        @click="rejectRequest(req.id)"
+                        class="px-3 py-1.5 rounded-md text-xs font-bold bg-rose-100 text-rose-700 hover:bg-rose-200">
+                        Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </article>
       </section>
     </section>
