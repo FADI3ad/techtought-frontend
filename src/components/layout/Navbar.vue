@@ -1,479 +1,77 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { onMounted, watch } from "vue";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useCartStore } from "../../stores/useCartStore";
-import api from "../../services/axios";
+import { useSettingsStore } from "../../stores/useSettingsStore";
+
+import NavbarSearch from "./NavbarSearch.vue";
+import NavbarActions from "./NavbarActions.vue";
+import NavbarCategories from "./NavbarCategories.vue";
 
 const auth = useAuthStore();
 const cart = useCartStore();
-const router = useRouter();
-const route = useRoute();
-
-const isMenuOpen = ref(false);
-const isProfileMenuOpen = ref(false);
-const scrollContainer = ref(null);
-
-const categories = ref([]);
-const subcategories = ref([]);
-const activeSlug = ref(null);
-const activeName = ref(null);
-const loadingSubcategories = ref(false);
-const isAdmin = computed(() => {
-  const role = auth.user?.role;
-  return role === "admin" || role === "super_admin";
-});
-
-async function loadCategories() {
-  try {
-    const res = await api.get("categories");
-    categories.value = res.data.data.categories;
-  } catch (error) {
-    console.error("Error loading categories:", error);
-  }
-}
-
-async function loadSubcategories(slug) {
-  loadingSubcategories.value = true;
-  try {
-    const res = await api.get(`categories/${slug}/subcategories`);
-    subcategories.value = res.data.data?.category?.subcategories ?? [];
-  } catch (error) {
-    console.error("Error loading subcategories:", error);
-    subcategories.value = [];
-  } finally {
-    loadingSubcategories.value = false;
-  }
-}
-
-async function selectCategory(cat) {
-  activeSlug.value = cat.slug;
-  activeName.value = cat.name;
-  loadSubcategories(cat.slug);
-  router.push({ name: "category", params: { slug: cat.slug } });
-}
-
-// Go back to showing all categories
-function clearCategory() {
-  activeSlug.value = null;
-  activeName.value = null;
-  subcategories.value = [];
-}
-
-function selectSubcategory(subSlug) {
-  router.push({
-    name: "subcategory",
-    params: { slug: activeSlug.value, subSlug },
-  });
-}
-
-const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value);
-const toggleProfileMenu = () =>
-  (isProfileMenuOpen.value = !isProfileMenuOpen.value);
-
-const closeDropdown = (e) => {
-  if (!e.target.closest(".profile-dropdown-container"))
-    isProfileMenuOpen.value = false;
-};
+const settingsStore = useSettingsStore();
 
 onMounted(() => {
-  window.addEventListener("click", closeDropdown);
+  settingsStore.fetchSettings();
 });
 
 watch(
   () => auth.isLoggedIn,
   (isLoggedIn) => {
     if (isLoggedIn) {
-      loadCategories();
       cart.fetchCart();
     }
   },
   { immediate: true }
 );
-onUnmounted(() => window.removeEventListener("click", closeDropdown));
-
-const scroll = (direction) => {
-  if (scrollContainer.value)
-    scrollContainer.value.scrollBy({
-      left: direction === "left" ? -200 : 200,
-      behavior: "smooth",
-    });
-};
-
-const logout = async () => {
-  try {
-    if (auth.user?.token)
-      await api.post("/logout");
-  } catch (err) {
-    console.error("Logout API error:", err);
-  } finally {
-    auth.logout();
-    isProfileMenuOpen.value = false;
-    router.push("/");
-  }
-};
-
-// ── WATCH ROUTE TO RESET NAVBAR WHEN USER GOES BACK ──
-watch(
-  () => route.name,
-  (newName) => {
-    if (newName !== "category" && newName !== "subcategory") {
-      clearCategory();
-    }
-  }
-);
 </script>
+
 <template>
-  <nav
-    class="w-full bg-white border-b border-gray-200 font-sans  top-0 z-50">
-    <!-- ════════ Nav Top ════════ -->
-    <div
-      class="flex items-center justify-between h-[70px] md:h-[80px] gap-4 md:gap-8 border-b border-gray-200 px-4 md:px-12">
-      <button @click="toggleMenu" class="md:hidden text-gray-600">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-7 w-7"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path
-            v-if="!isMenuOpen"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16m-7 6h7" />
-          <path
+  <nav class="w-full bg-white border-b border-gray-200 font-sans top-0 z-50">
+    <!-- Top Row (Logo, Search (desktop), Actions) -->
+    <div class="flex items-center justify-between h-[70px] md:h-[80px] gap-4 md:gap-8 px-4 md:px-12">
+      
+      <!-- Logo -->
+      <div class="text-xl md:text-3xl font-bold tracking-tight text-black flex-shrink-0">
+        <router-link to="/" class="flex-shrink-0 flex items-center group">
+          <img
+            v-if="settingsStore.settings.logo"
+            :src="settingsStore.settings.logo"
+            alt="TechTought"
+            class="h-6 md:h-8 object-contain transition-transform" />
+          <img
             v-else
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-
-      <div
-        class="text-2xl md:text-3xl font-bold tracking-tight text-black flex-shrink-0">
-        <router-link to="/"
-          ><img src="../../assets/images/Group 13.png" alt="Logo"
-        /></router-link>
+            src="../../assets/images/Group 13.png"
+            alt="TechTought"
+            class="h-6 md:h-8 transition-transform" />
+        </router-link>
       </div>
 
-      <div class="hidden md:block flex-grow relative max-w-[850px]">
-        <input
-          type="text"
-          placeholder="Search for courses..."
-          class="w-full h-[45px] pl-6 pr-14 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 text-gray-600" />
-        <button
-          class="absolute right-1 top-1 bg-[#1DA1F2] text-white p-2 rounded-full hover:bg-blue-500 transition-colors">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </button>
+      <!-- Search (Desktop only in this row, hidden on mobile) -->
+      <div class="hidden md:block flex-grow max-w-[850px]">
+        <NavbarSearch />
       </div>
 
-      <div
-        class="flex items-center gap-3 md:gap-6 text-[15px] font-semibold text-[#444]">
-        <template v-if="!auth.isLoggedIn">
-          <router-link
-            to="/instructor-application"
-            class="hidden lg:block hover:text-blue-600 transition-colors">
-            Teach with TechTought
-          </router-link>
-          <router-link
-            to="/signup"
-            class="bg-[#1DA1F2] text-white px-4 py-2 md:px-5 md:py-2 rounded-lg hover:bg-blue-500 transition-colors text-sm md:text-base">
-            Join Us
-          </router-link>
-        </template>
-
-        <template v-else>
-          <router-link to="/my-learning" class="hidden sm:block hover:text-blue-600"
-            >My learning</router-link
-          >
-
-          <button class="text-gray-400 hover:text-red-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 md:h-7 md:w-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
-
-          <!-- Cart Icon -->
-          <router-link to="/cart" class="relative text-gray-400 hover:text-[#1DA1F2] transition-colors">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 md:h-7 md:w-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <span
-              v-if="cart.cartCount > 0"
-              class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-              {{ cart.cartCount }}
-            </span>
-          </router-link>
-
-          <div class="relative profile-dropdown-container">
-            <button
-              @click="toggleProfileMenu"
-              class="flex items-center focus:outline-none">
-              <div
-                class="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-blue-500 transition-all">
-                <img
-                  src="../../assets/images/user.png"
-                  alt="Profile"
-                  class="w-full h-full object-cover" />
-              </div>
-            </button>
-
-            <div
-              v-if="isProfileMenuOpen"
-              class="absolute right-0 mt-3 w-56 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-[60]">
-              <div class="px-4 py-3 border-b border-gray-100">
-                <p class="text-sm font-bold text-gray-800">
-                  {{ auth.user?.name || "User Name" }}
-                </p>
-                <p class="text-xs text-gray-500 truncate">
-                  {{ auth.user?.email || "user@example.com" }}
-                </p>
-              </div>
-              <div class="py-1">
-                <router-link
-                  v-if="isAdmin"
-                  to="/admin/dashboard"
-                  class="dropdown-item"
-                  >Admin Dashboard</router-link
-                >
-                <router-link to="/profile" class="dropdown-item"
-                  >My Profile</router-link
-                >
-                <router-link to="/settings" class="dropdown-item"
-                  >Settings</router-link
-                >
-                <router-link to="/billing" class="dropdown-item"
-                  >Billing & Payments</router-link
-                >
-              </div>
-              <div class="border-t border-gray-100 py-1">
-                <button
-                  @click="logout"
-                  class="dropdown-item text-red-600 hover:bg-red-50 w-full text-left">
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </template>
+      <!-- Actions (Profile, Cart, Fav, Guest Auth) -->
+      <div class="flex items-center">
+        <NavbarActions />
       </div>
+
     </div>
 
-    <!-- ════════ Mobile menu ════════ -->
-    <div
-      v-if="isMenuOpen"
-      class="md:hidden bg-white border-b border-gray-200 px-4 py-4 space-y-4">
-      <input
-        type="text"
-        placeholder="Search..."
-        class="w-full h-[40px] px-4 rounded-lg border border-gray-300 focus:outline-none" />
-      <div class="flex flex-col gap-3 font-semibold text-gray-700">
-        <router-link to="/instructor-application" @click="isMenuOpen = false"
-          >Teach with TechTought</router-link
-        >
-        <router-link to="/my-learning" v-if="auth.isLoggedIn" @click="isMenuOpen = false">My learning</router-link>
-      </div>
+    <!-- Mobile Search Row -->
+    <div class="block md:hidden px-4 py-3 border-t border-gray-200">
+      <NavbarSearch />
     </div>
 
-    <!-- ════════ Bottom Bar ════════ -->
-    <div v-if="auth.isLoggedIn" class="max-w-[1340px] mx-auto px-2 md:px-4">
-      <div class="flex items-center relative group">
-        <!-- Scroll left -->
-        <button
-          @click="scroll('left')"
-          class="hidden md:flex absolute left-0 z-10 w-7 h-7 items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 text-gray-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
 
-        <div
-          ref="scrollContainer"
-          class="flex items-center overflow-x-auto scroll-smooth no-scrollbar h-[45px] md:h-[50px] w-full px-2 md:px-8">
-          <!-- ══ STATE A: No category selected → show all categories ══ -->
-          <Transition name="fade" mode="out-in">
-            <div
-              v-if="!activeSlug"
-              key="all-cats"
-              class="flex items-center flex-nowrap">
-              <button
-                v-for="cat in categories"
-                :key="cat.slug"
-                @click="selectCategory(cat)"
-                class="nav-link shrink-0">
-                {{ cat.name }}
-              </button>
-            </div>
-
-            <!-- ══ STATE B: Category selected → show active name + subcategories ══ -->
-            <!-- ══ STATE B: Category selected → show active name + subcategories ══ -->
-            <div
-              v-else
-              key="sub-cats"
-              class="flex items-center flex-nowrap gap-0">
-              <!-- إزالة زر الرجوع -->
-              <span class="active-cat-name shrink-0">{{ activeName }}</span>
-
-              <!-- › separator -->
-              <span
-                class="text-gray-400 font-semibold text-sm px-2 shrink-0 select-none"
-                >›</span
-              >
-
-              <!-- Shimmer -->
-              <template v-if="loadingSubcategories">
-                <div
-                  v-for="n in 4"
-                  :key="n"
-                  class="h-4 w-16 bg-gray-200 rounded animate-pulse shrink-0 mx-3" />
-              </template>
-
-              <!-- Subcategories -->
-              <template v-else>
-                <template v-for="(sub, idx) in subcategories" :key="sub.slug">
-                  <button
-                    @click="selectSubcategory(sub.slug)"
-                    class="sub-link shrink-0"
-                    :class="{
-                      'sub-link--active': route.params.subSlug === sub.slug,
-                    }">
-                    {{ sub.name }}
-                  </button>
-                  <span
-                    v-if="idx < subcategories.length - 1"
-                    class="text-gray-300 text-xs px-1 shrink-0 select-none"
-                    >|</span
-                  >
-                </template>
-              </template>
-            </div>
-          </Transition>
-        </div>
-
-        <!-- Scroll right -->
-        <button
-          @click="scroll('right')"
-          class="hidden md:flex absolute right-0 z-10 w-7 h-7 items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 text-gray-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
+    
+    <!-- Categories Row -->
+    <div class="w-full border-t border-gray-300" v-if="auth.isLoggedIn">
+      <NavbarCategories />
     </div>
+
+    
   </nav>
 </template>
-
-<style scoped>
-  /* ── All-categories links ── */
-  .nav-link {
-    @apply bg-transparent cursor-pointer whitespace-nowrap
-         text-[#444] font-semibold text-xs md:text-sm
-         px-4 md:px-6 border-r border-gray-200 last:border-0
-         hover:text-blue-600 transition-colors;
-  }
-
-  /* ── Active category name (bold, no underline needed) ── */
-  .active-cat-name {
-    @apply text-black font-extrabold text-xs md:text-sm whitespace-nowrap;
-  }
-
-  /* ── Back arrow button ── */
-  .back-btn {
-    @apply flex items-center justify-center w-6 h-6 mr-1
-         text-gray-500 hover:text-black transition-colors
-         bg-transparent cursor-pointer rounded-full
-         hover:bg-gray-100;
-  }
-
-  /* ── Subcategory inline links ── */
-  .sub-link {
-    @apply bg-transparent cursor-pointer whitespace-nowrap
-         text-gray-500 font-medium text-xs md:text-sm
-         px-2 hover:text-gray-900 transition-colors;
-  }
-
-  .sub-link--active {
-    @apply text-black font-semibold;
-  }
-
-  /* ── Dropdown items ── */
-  .dropdown-item {
-    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100
-         hover:text-blue-600 transition-colors cursor-pointer;
-  }
-
-  /* ── Scrollbar hide ── */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* ── Fade transition between states ── */
-  .fade-enter-active,
-  .fade-leave-active {
-    transition:
-      opacity 0.15s ease,
-      transform 0.15s ease;
-  }
-  .fade-enter-from {
-    opacity: 0;
-    transform: translateX(8px);
-  }
-  .fade-leave-to {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-</style>

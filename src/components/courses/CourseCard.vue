@@ -1,4 +1,5 @@
 <script setup>
+  import { ref, computed } from "vue";
   import { useRouter } from "vue-router";
   import { useAuthStore } from "../../stores/useAuthStore";
   import api from "../../services/axios";
@@ -12,6 +13,41 @@
       required: true,
     },
   });
+
+  const courseImage = computed(() => {
+    const img = props.course.image || props.course.image_path;
+    if (!img) return '';
+    if (img.startsWith('http')) return img;
+    // Fallback for relative paths missing the base URL
+    const baseUrl = api.defaults.baseURL.replace('/api', '');
+    return `${baseUrl}/storage/${img}`;
+  });
+
+  const hovered = ref(false);
+  const popoverPosition = ref("right");
+  let hoverTimeout = null;
+
+  const onMouseEnter = (event) => {
+    if (hoverTimeout) clearTimeout(hoverTimeout);
+    
+    const rect = event.currentTarget.getBoundingClientRect();
+    const spaceOnRight = window.innerWidth - rect.right;
+    if (spaceOnRight < 340) {
+      popoverPosition.value = "left";
+    } else {
+      popoverPosition.value = "right";
+    }
+
+    // Udemy-style hover delay of 350ms
+    hoverTimeout = setTimeout(() => {
+      hovered.value = true;
+    }, 350);
+  };
+
+  const onMouseLeave = () => {
+    if (hoverTimeout) clearTimeout(hoverTimeout);
+    hovered.value = false;
+  };
 
   const goToDetails = () => {
     router.push({ name: "course-details", params: { slug: props.course.slug } });
@@ -46,27 +82,38 @@
 </script>
 
 <template>
-  <div @click="goToDetails" class="course-inner cursor-pointer flex flex-col h-full group">
+  <div 
+    @click="goToDetails" 
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
+    class="course-inner cursor-pointer flex flex-col h-full group relative"
+  >
     
     <div
       class="relative aspect-video overflow-hidden rounded-xl mb-4 shadow-sm transition-shadow duration-300 bg-gray-100">
       <img
-        :src="course.image_path || course.image"
+        :src="courseImage"
         alt="Course Thumbnail"
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:blur-[2px]" />
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:blur-[1px]" />
       
-      <!-- Hover Overlay -->
-      <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6">
-        <button 
-          @click.stop="handleEnroll"
-          class="bg-white text-gray-900 px-6 py-2.5 rounded-full font-bold text-sm shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-indigo-600 hover:text-white"
+      <!-- Floating Price Badge on Top of Image -->
+      <div class="absolute top-3 left-3 z-10 flex items-center">
+        <span 
+          v-if="course.is_free"
+          class="bg-emerald-500/90 text-white font-extrabold text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-md shadow-md backdrop-blur-sm border border-emerald-400/30"
         >
-          {{ course.is_enrolled ? 'Go to Course' : (course.is_free ? 'Enroll Now' : 'View Details') }}
-        </button>
+          Free
+        </span>
+        <span 
+          v-else
+          class="bg-[#1c1d1f]/90 text-white font-extrabold text-xs px-3 py-1 rounded-md shadow-md backdrop-blur-sm border border-white/20"
+        >
+          ${{ course.price }}
+        </span>
       </div>
     </div>
 
-    <h3 class="font-bold leading-snug mb-2 transition-colors duration-300 group-hover:text-[#4f46e5] line-clamp-2 min-h-[2.8rem]">
+    <h3 class="font-bold leading-snug mb-2 transition-colors duration-300 group-hover:text-[#4f46e5] line-clamp-2 min-h-[2.8rem] text-gray-900">
       {{ course.title }}
     </h3>
 
@@ -86,21 +133,99 @@
       </span>
     </div>
 
+    <!-- Reverted Clean Bottom Row -->
     <div class="flex items-center justify-between border-t pt-3 mt-auto">
-      <span class="text-sm font-medium text-gray-700">{{ course.instructor?.name || 'Instructor' }}</span>
+      <span class="text-sm font-medium text-gray-700 truncate max-w-[150px]" :title="course.instructor?.name">
+        {{ course.instructor?.name || 'Instructor' }}
+      </span>
       <div class="flex items-center gap-1">
         <span class="text-yellow-400 text-xs">★</span>
         <span class="text-xs font-bold text-gray-900">{{ Number(course.avg_rating || course.reviews_avg_rating || 0).toFixed(1) }}</span>
+      </div>
+    </div>
+
+    <!-- Floating Udemy-style Details Popover -->
+    <div 
+      v-if="hovered" 
+      :class="[
+        'absolute top-0 w-80 bg-white border border-[#d1d7dc] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),_0_1px_4px_rgba(0,0,0,0.08)] z-[999] transition-all duration-200 pointer-events-auto text-[#2d2f31] rounded-none',
+        popoverPosition === 'right' ? 'left-full ml-4 animate-slide-right' : 'right-full mr-4 animate-slide-left'
+      ]"
+      @click.stop
+    >
+      <!-- Caret Arrow Pointer -->
+      <div 
+        :class="[
+          'absolute w-3.5 h-3.5 bg-white border-[#d1d7dc] rotate-45 z-[-1]',
+          popoverPosition === 'right' ? '-left-[8px] top-12 border-l border-b' : '-right-[8px] top-12 border-r border-t'
+        ]"
+      ></div>
+
+      <!-- Popover Content -->
+      <h4 class="font-bold text-[#2d2f31] text-[15px] leading-snug line-clamp-3">
+        {{ course.title }}
+      </h4>
+
+      <p class="text-[11px] text-[#1c1d1f] font-semibold mt-1">
+        By {{ course.instructor?.name || 'Instructor' }}
+      </p>
+
+      <div class="flex items-center gap-1.5 text-[10px] text-[#6a6f73] mt-1.5 font-medium">
+        <span class="text-yellow-600 font-extrabold">★ {{ Number(course.avg_rating || course.reviews_avg_rating || 0).toFixed(1) }}</span>
+        <span>•</span>
+        <span>{{ course.duration || 'Self-paced' }}</span>
+        <span>•</span>
+        <span>All Levels</span>
+      </div>
+
+      <p class="text-xs text-[#2d2f31] mt-3 line-clamp-4 font-normal leading-relaxed">
+        {{ course.description || 'No description available for this course.' }}
+      </p>
+
+      <!-- Action Row -->
+      <div class="pt-3 mt-4 border-t border-[#d1d7dc] flex items-center">
+        <button 
+          @click.stop="handleEnroll"
+          class="w-full bg-[#1c1d1f] hover:bg-[#2d2f31] text-white font-bold py-3 px-4 text-xs transition-all flex items-center justify-center gap-2 active:scale-95"
+        >
+          <span>{{ course.is_enrolled ? 'Go to Course' : (course.is_free ? 'Enroll Now' : 'Add to Cart') }}</span>
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-  /* استخدمنا class "group" في التيلويند بدلاً من CSS التقليدي 
-     لأنه أنظف، لكن تركت لك الـ scoped إذا كنت تفضله 
-  */
   .course-inner:hover .relative {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .animate-slide-right {
+    animation: slideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .animate-slide-left {
+    animation: slideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes slideRight {
+    from {
+      opacity: 0;
+      transform: translateX(-10px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  @keyframes slideLeft {
+    from {
+      opacity: 0;
+      transform: translateX(10px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
   }
 </style>

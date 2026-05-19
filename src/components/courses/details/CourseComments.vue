@@ -81,7 +81,7 @@
         <div class="flex gap-4">
           <div class="flex-shrink-0">
             <div
-              class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg">
+              class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold text-lg">
               {{ authStore.user?.name?.charAt(0).toUpperCase() || "U" }}
             </div>
           </div>
@@ -89,13 +89,13 @@
             <textarea
               v-model="newComment"
               rows="3"
-              class="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none"
+              class="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all resize-none"
               placeholder="Write your comment here..."></textarea>
             <div class="mt-3 flex justify-end">
               <button
                 @click="submitComment"
                 :disabled="submitting || !newComment.trim()"
-                class="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                class="px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                 <span
                   v-if="submitting"
                   class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -113,7 +113,7 @@
         </p>
         <router-link
           to="/login"
-          class="inline-flex px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors">
+          class="inline-flex px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors">
           Login Now
         </router-link>
       </div>
@@ -122,7 +122,7 @@
     <!-- Comments List -->
     <div v-if="loading" class="flex justify-center py-10">
       <div
-        class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+        class="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
     </div>
 
     <div v-else-if="comments.length > 0" class="space-y-8">
@@ -139,12 +139,12 @@
             :alt="comment.name" />
           <div
             v-else
-            class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-lg border border-indigo-100">
+            class="w-12 h-12 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 font-bold text-lg border border-primary-100">
             {{ comment.name?.charAt(0).toUpperCase() || "?" }}
           </div>
         </div>
         <div
-          class="flex-grow bg-white p-6 rounded-2xl border border-gray-100 group-hover:border-indigo-100 transition-colors shadow-sm">
+          class="flex-grow bg-white p-6 rounded-2xl border border-gray-100 group-hover:border-primary-100 transition-colors shadow-sm">
           <div class="flex items-center justify-between mb-2">
             <div>
               <h4 class="font-bold text-gray-900 leading-none mb-1">

@@ -2,14 +2,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/useAuthStore";
 
 // 1. Guest Views
-import HomeGuest from "../views/Home/HomeGuest.vue";
+import HomeGuest from "../views/Student/HomeGuest.vue";
 import Login from "../views/Auth/Login.vue";
 import SignUp from "../views/Auth/Signup.vue";
-import InstructorApplication from "../views/Instructor/InstructorApplication.vue";
+import InstructorApplication from "../views/Student/InstructorApplication.vue";
 
 // 2. Auth/Student Views
-import HomeAuth from "../views/Home/HomeAuth.vue";
-import CategoryCourses from "../views/Course/CategoryCourses.vue";
+import HomeAuth from "../views/Student/HomeAuth.vue";
+import CategoryCourses from "../views/Student/Course/CategoryCourses.vue";
 
 const routes = [
   // =========================================================================
@@ -19,7 +19,7 @@ const routes = [
     path: "/",
     name: "HomeGuest",
     component: HomeGuest,
-    meta: { guest: false },
+    meta: { guest: true },
   },
   {
     path: "/login",
@@ -39,12 +39,18 @@ const routes = [
     component: InstructorApplication,
     meta: { guest: true },
   },
+  {
+    path: "/contact",
+    name: "contact",
+    component: () => import("../views/Student/ContactView.vue"),
+    meta: { requiresAuth: false },
+  },
 
   // =========================================================================
   // STUDENT / SHARED AUTH ROUTES
   // =========================================================================
   {
-    path: "/dashboard",
+    path: "/home",
     name: "HomeAuth",
     component: HomeAuth,
     meta: { requiresAuth: true },
@@ -53,36 +59,48 @@ const routes = [
     path: "/category/:slug",
     name: "category",
     component: CategoryCourses,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: false },
   },
   {
     path: "/category/:slug/:subSlug",
     name: "subcategory",
     component: CategoryCourses,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: false },
   },
   {
     path: "/course/:slug",
     name: "course-details",
-    component: () => import("../views/Course/CourseDetails.vue"),
+    component: () => import("../views/Student/Course/CourseDetails.vue"),
     meta: { requiresAuth: false },
   },
   {
     path: "/my-learning",
     name: "my-learning",
-    component: () => import("../views/Course/MyCourses.vue"),
+    component: () => import("../views/Student/Course/MyCourses.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/course/:slug/learn",
     name: "course-lesson",
-    component: () => import("../views/Course/CourseLessons.vue"),
+    component: () => import("../views/Student/Course/CourseLessons.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/cart",
     name: "cart",
-    component: () => import("../views/Cart/Cart.vue"),
+    component: () => import("../views/Student/Cart.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/favorites",
+    name: "favorites",
+    component: () => import("../views/Student/Course/Favorites.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/submit-testimonial",
+    name: "submit-testimonial",
+    component: () => import("../views/Student/Testimonials.vue"),
     meta: { requiresAuth: true },
   },
 
@@ -91,27 +109,40 @@ const routes = [
   // =========================================================================
   {
     path: "/instructor/dashboard",
-    name: "instructor-dashboard",
-    component: () => import("../views/Instructor/InstructorDashboard.vue"),
+    component: () => import("../views/Instructor/InstructorLayout.vue"),
     meta: { requiresAuth: true, role: "instructor" },
-  },
-  {
-    path: "/instructor/my-courses",
-    name: "instructor-courses",
-    component: () => import("../views/Instructor/InstructorCourseList.vue"),
-    meta: { requiresAuth: true, role: "instructor" },
-  },
-  {
-    path: "/instructor/my-courses/:slug/content",
-    name: "instructor-course-content",
-    component: () => import("../views/Instructor/InstructorCourseContent.vue"),
-    meta: { requiresAuth: true, role: "instructor" },
-  },
-  {
-    path: "/instructor/create-course",
-    name: "create-course",
-    component: () => import("../views/Instructor/InstructorCreateCourse.vue"),
-    meta: { requiresAuth: true, role: "instructor" },
+    children: [
+      {
+        path: "",
+        name: "instructor-dashboard",
+        component: () => import("../views/Instructor/components/Overview.vue"),
+      },
+      {
+        path: "courses",
+        name: "instructor-courses",
+        component: () => import("../views/Instructor/components/CourseManagement.vue"),
+      },
+      {
+        path: "courses/create",
+        name: "instructor-create-course",
+        component: () => import("../views/Instructor/components/CourseForm.vue"),
+      },
+      {
+        path: "courses/:slug/edit",
+        name: "instructor-edit-course",
+        component: () => import("../views/Instructor/components/CourseForm.vue"),
+      },
+      {
+        path: "courses/:slug/curriculum",
+        name: "instructor-curriculum",
+        component: () => import("../views/Instructor/components/CurriculumBuilder.vue"),
+      },
+      {
+        path: "reviews",
+        name: "instructor-reviews",
+        component: () => import("../views/Instructor/components/ReviewsComments.vue"),
+      }
+    ]
   },
 
   // =========================================================================
@@ -119,9 +150,65 @@ const routes = [
   // =========================================================================
   {
     path: "/admin/dashboard",
-    name: "admin-dashboard",
     component: () => import("../views/Admin/AdminDashboard.vue"),
     meta: { requiresAuth: true, role: "admin" },
+    children: [
+      {
+        path: "",
+        name: "admin-dashboard",
+        component: () => import("../views/Admin/components/DashboardOverview.vue"),
+      },
+      {
+        path: "categories",
+        name: "admin-categories",
+        component: () => import("../views/Admin/components/CategoryManagement.vue"),
+      },
+      {
+        path: "subcategories",
+        name: "admin-subcategories",
+        component: () => import("../views/Admin/components/SubcategoryManagement.vue"),
+      },
+      {
+        path: "users",
+        name: "admin-users",
+        component: () => import("../views/Admin/components/UserManagement.vue"),
+      },
+      {
+        path: "instructors",
+        name: "admin-instructors",
+        component: () => import("../views/Admin/components/InstructorRequests.vue"),
+      },
+      {
+        path: "testimonials",
+        name: "admin-testimonials",
+        component: () => import("../views/Admin/components/TestimonialManagement.vue"),
+      },
+      {
+        path: "courses",
+        name: "admin-courses",
+        component: () => import("../views/Admin/components/CourseManagement.vue"),
+      },
+      {
+        path: "contacts",
+        name: "admin-contacts",
+        component: () => import("../views/Admin/components/ContactMessages.vue"),
+      },
+      {
+        path: "subscriptions",
+        name: "admin-subscriptions",
+        component: () => import("../views/Admin/components/NewsletterManagement.vue"),
+      },
+      {
+        path: "settings",
+        name: "admin-settings",
+        component: () => import("../views/Admin/components/SettingsManagement.vue"),
+      },
+      {
+        path: "theme",
+        name: "admin-theme",
+        component: () => import("../views/Admin/components/ThemeSettings.vue"),
+      }
+    ]
   },
   {
     path: "/admin/instructor-requests/:slug",

@@ -29,10 +29,10 @@
       <h2 class="text-2xl font-bold text-gray-900 tracking-tight">
         {{ title }}
       </h2>
-      <div class="w-20 h-1.5 bg-indigo-600 mt-2 rounded-full"></div>
+      <div class="w-20 h-1.5 bg-primary-600 mt-2 rounded-full"></div>
     </div>
 
-    <div class="scroll-section-wrapper relative group">
+    <div class="scroll-section-wrapper relative hover-trigger">
       <!-- Left Button -->
       <button
         @click="scrollSection($event, 'left')"
@@ -122,7 +122,7 @@
     transition: all 0.3s ease;
   }
 
-  .group:hover .scroll-btn {
+  .hover-trigger:hover .scroll-btn {
     opacity: 1;
   }
 

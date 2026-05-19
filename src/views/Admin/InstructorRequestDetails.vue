@@ -138,10 +138,10 @@
               <a 
                 :href="storageUrl + request.cv_link" 
                 target="_blank"
-                class="flex items-center justify-between p-4 bg-blue-50 rounded-2xl group hover:bg-blue-100 transition-colors"
+                class="flex items-center justify-between p-4 bg-primary-50 rounded-2xl group hover:bg-primary-100 transition-colors"
               >
-                <span class="text-blue-700 font-black">Curriculum Vitae (CV)</span>
-                <span class="text-blue-500 group-hover:translate-x-1 transition-transform">Download →</span>
+                <span class="text-primary-700 font-black">Curriculum Vitae (CV)</span>
+                <span class="text-primary-500 group-hover:translate-x-1 transition-transform">Download →</span>
               </a>
             </div>
           </div>

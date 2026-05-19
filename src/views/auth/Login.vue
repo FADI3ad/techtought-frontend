@@ -62,6 +62,8 @@
         errors.value = error.response.data.errors || {};
       } else if (error.response?.status === 401) {
         serverError.value = "Invalid email or password.";
+      } else if (error.response?.status === 403) {
+        serverError.value = error.response.data.message || "Your account has been blocked.";
       } else if (error.response?.data?.message) {
         serverError.value = error.response.data.message;
       } else {
@@ -69,6 +71,23 @@
       }
     }
   };
+
+  import { onMounted } from "vue";
+  import Swal from "sweetalert2";
+
+  onMounted(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('message') === 'blocked') {
+      Swal.fire({
+        title: 'Account Blocked',
+        text: 'Your account has been blocked by an administrator. Please contact support.',
+        icon: 'error',
+        confirmButtonColor: '#12141a'
+      });
+      // Clear the URL param without refreshing
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  });
 </script>
 
 <template>

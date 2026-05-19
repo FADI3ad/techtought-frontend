@@ -18,4 +18,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      // If blocked or unauthorized, clear storage and redirect
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      
+      if (window.location.pathname !== '/login') {
+        // We use window.location.href to force a full refresh and clear all states
+        window.location.href = "/login?message=blocked";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

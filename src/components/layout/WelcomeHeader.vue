@@ -19,7 +19,7 @@
           <h1
             class="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">
             Welcome back,
-            <span class="text-indigo-600">{{ authStore.user?.name || 'Student' }}</span>
+            <span class="text-primary-600">{{ authStore.user?.name || 'Student' }}</span>
           </h1>
           <p class="text-gray-500 mt-1 font-medium">
             Ready to continue your learning journey?
