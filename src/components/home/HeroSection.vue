@@ -76,23 +76,63 @@
 
 <template>
   <section
-    class="relative pt-48 pb-24 bg-gradient-to-r from-white via-[#b3eeff] via-[#61DAFB] to-[#0800FF] overflow-hidden">
+    class="relative pt-48 pb-6 bg-gradient-to-r bg-gradient-to-br from-[#ffffff] via-[#e0f2fe] to-[#bfdbfe] backdrop-blur-2xl border border-white/40 shadow-[0_10px_40px_rgba(59,130,246,0.15)] overflow-hidden">
     <div
       class="max-w-[1340px] mx-auto px-6 lg:px-10 flex flex-col lg:flex-row items-start justify-between">
       <div
         class="flex-1 z-10 text-center lg:text-left lg:mb-0 mb-20 lg:-translate-y-10">
         <h1
-          class="text-4xl sm:text-5xl lg:text-5xl font-black text-gray-900 tracking-tight mb-5 leading-tight"
-          style="text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25)">
+          class="text-4xl sm:text-5xl lg:text-5xl font-black text-gray-800 tracking-tight mb-5 leading-tight"
+          style="text-shadow: 0 6px 20px rgba(0, 0, 0, 0.15)">
           Build a Powerful Computer Science - Foundation !
         </h1>
         <p
-          class="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed"
-          style="text-shadow: 0 2px 10px rgba(0, 0, 0, 0.18)">
+          class="text-base sm:text-lg lg:text-xl text-gray-500 leading-relaxed"
+          style="text-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)">
           Start from the basics and grow step by step into a confident
           <br />
           CS student.
         </p>
+
+        <!-- CTA Buttons -->
+        <div
+          class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-8">
+          <router-link
+            to="/signup"
+            class="w-full sm:w-auto bg-[#1a365d] hover:bg-[#11243f] text-white font-semibold text-[15px] px-8 py-3 rounded-xl shadow-sm transition-all duration-200 flex items-center justify-center gap-2">
+            <span>Explore Courses</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-4 h-4">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </router-link>
+
+          <router-link
+            to="/contact"
+            class="w-full sm:w-auto border border-[#1a365d] text-[#1a365d] hover:bg-[#1a365d] hover:text-white font-semibold text-[15px] px-8 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2">
+            <span>Contact Us</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-4 h-4">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.502-5.118-3.796-6.62-6.62l1.293-.97a1.248 1.248 0 00.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+            </svg>
+          </router-link>
+        </div>
       </div>
 
       <div
@@ -107,13 +147,13 @@
               :cy="cy"
               :r="R"
               class="stroke-black fill-none"
-              stroke-width="5" />
+              stroke-width="6" />
             <circle
               :cx="cx"
               :cy="cy"
-              :r="R * 0.773"
+              :r="R * 0.75"
               class="stroke-black fill-none"
-              stroke-width="5" />
+              stroke-width="6" />
           </svg>
 
           <div
@@ -121,14 +161,14 @@
             :key="i"
             class="absolute w-24 h-24 flex items-center justify-center -translate-x-1/2 -translate-y-1/2 group/icon"
             :style="{
-              left: icon.x + 'px',
-              top: icon.y + 'px',
+              left: icon.x -5 + 'px',
+              top: icon.y +7+ 'px',
               zIndex: 20,
-              marginTop: '22px',
+              marginTop: '24px',
             }">
             <!-- Label Tooltip -->
             <span
-              class="absolute -top-8 px-2.5 py-1 text-[11px] font-bold text-white bg-gray-900/90 rounded-md border border-white/10 opacity-0 group-hover/icon:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap shadow-md translate-y-1 group-hover/icon:-translate-y-0 z-30">
+              class="absolute -top-4 px-2.5 py-1 text-[11px] font-bold text-white bg-gray-900/90 rounded-md border border-white/10 opacity-0 group-hover/icon:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap shadow-md translate-y-1 group-hover/icon:-translate-y-0 z-30">
               {{ icon.label }}
             </span>
 

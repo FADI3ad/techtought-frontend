@@ -1,45 +1,45 @@
 <template>
-  <div class="min-h-screen bg-gray-50  pb-6 flex flex-col justify-center">
+  <div class="h-[calc(100vh-85px)] bg-gray-50 pt-20">
     <div class="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-6 animate-fade-in">
-        <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl tracking-tight">
-          Become an <span class="text-primary-600">Instructor</span>
+        <h1 class="text-3xl font-black text-gray-900 sm:text-4xl tracking-tight">
+          Become an <span class="text-[#1a365d]">Instructor</span>
         </h1>
-        <p class="mt-2 text-base text-gray-500 max-w-2xl mx-auto">
+        <p class="mt-4 text-base sm:text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
           Join our global community of experts and share your knowledge with the world.
         </p>
       </div>
 
       <div class="animate-slide-in-up">
-        <form @submit.prevent="handleSubmit" class="bg-white rounded-2xl p-6 shadow-xl shadow-primary-200/20 border border-primary-50 space-y-5">
+        <form @submit.prevent="handleSubmit" class="bg-white rounded-2xl p-8 shadow-md shadow-gray-200/40 border border-gray-100/80 space-y-6">
           
           <!-- Personal Info Section -->
           <div>
             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <span class="w-7 h-7 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center text-sm">1</span>
+              <span class="w-7 h-7 rounded-lg bg-blue-50 text-[#1a365d] flex items-center justify-center text-sm font-semibold">1</span>
               Personal Credentials
             </h2>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-700 ml-1">Full Name</label>
-                <input v-model="formData.name" required type="text" placeholder="John Doe" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-600/10 transition-all outline-none text-sm" />
+                <input v-model="formData.name" required type="text" placeholder="John Doe" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200/70 focus:bg-white focus:border-[#1a365d] focus:ring-4 focus:ring-blue-900/5 transition-all duration-200 outline-none text-sm font-medium" />
               </div>
               <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-700 ml-1">Email Address</label>
-                <input v-model="formData.email" required type="email" placeholder="john@example.com" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-600/10 transition-all outline-none text-sm" />
+                <input v-model="formData.email" required type="email" placeholder="john@example.com" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200/70 focus:bg-white focus:border-[#1a365d] focus:ring-4 focus:ring-blue-900/5 transition-all duration-200 outline-none text-sm font-medium" />
               </div>
               <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-700 ml-1">Phone Number</label>
-                <input v-model="formData.phone" required type="tel" placeholder="+1 (234) 567-890" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-600/10 transition-all outline-none text-sm" />
+                <input v-model="formData.phone" required type="tel" placeholder="+1 (234) 567-890" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200/70 focus:bg-white focus:border-[#1a365d] focus:ring-4 focus:ring-blue-900/5 transition-all duration-200 outline-none text-sm font-medium" />
               </div>
               <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-700 ml-1">Country</label>
-                <input v-model="formData.country" required type="text" placeholder="Egypt" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-600/10 transition-all outline-none text-sm" />
+                <input v-model="formData.country" required type="text" placeholder="Egypt" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200/70 focus:bg-white focus:border-[#1a365d] focus:ring-4 focus:ring-blue-900/5 transition-all duration-200 outline-none text-sm font-medium" />
               </div>
               <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-700 ml-1">Age</label>
-                <input v-model="formData.age" required type="number" placeholder="30" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-600/10 transition-all outline-none text-sm" />
+                <input v-model="formData.age" required type="number" placeholder="30" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200/70 focus:bg-white focus:border-[#1a365d] focus:ring-4 focus:ring-blue-900/5 transition-all duration-200 outline-none text-sm font-medium" />
               </div>
             </div>
           </div>
@@ -49,7 +49,7 @@
           <!-- Experience & Identity Section -->
           <div>
             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <span class="w-7 h-7 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center text-sm">2</span>
+              <span class="w-7 h-7 rounded-lg bg-blue-50 text-[#1a365d] flex items-center justify-center text-sm font-semibold">2</span>
               Experience & Identity
             </h2>
 
@@ -57,7 +57,7 @@
               <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-700 ml-1">Years of Experience</label>
                 <div class="relative">
-                  <select v-model="formData.experience_years" required class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-600/10 transition-all outline-none appearance-none cursor-pointer text-sm">
+                  <select v-model="formData.experience_years" required class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200/70 focus:bg-white focus:border-[#1a365d] focus:ring-4 focus:ring-blue-900/5 transition-all duration-200 outline-none appearance-none cursor-pointer text-sm font-medium">
                     <option value="" disabled selected>Select Experience</option>
                     <option :value="3">3-5 Years</option>
                     <option :value="5">5-10 Years</option>
@@ -70,10 +70,10 @@
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <label class="file-upload-card" :class="{ 'border-primary-600 bg-primary-50/50': formData.cv_link }">
+                <label class="file-upload-card" :class="{ 'border-[#1a365d] bg-blue-50/50': formData.cv_link }">
                   <input type="file" @change="(e) => (formData.cv_link = e.target.files[0])" hidden accept=".pdf,.doc,.docx" />
                   <div class="flex flex-col items-center gap-1.5 text-center overflow-hidden w-full">
-                    <div class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-blue-50 text-[#1a365d] flex items-center justify-center shrink-0">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     </div>
                     <span class="text-xs font-bold text-gray-700">Upload CV</span>
@@ -83,10 +83,10 @@
                   </div>
                 </label>
 
-                <label class="file-upload-card" :class="{ 'border-primary-600 bg-primary-50/50': formData.national_id_front_image }">
+                <label class="file-upload-card" :class="{ 'border-[#1a365d] bg-blue-50/50': formData.national_id_front_image }">
                   <input type="file" @change="(e) => (formData.national_id_front_image = e.target.files[0])" hidden accept="image/*" />
                   <div class="flex flex-col items-center gap-1.5 text-center overflow-hidden w-full">
-                    <div class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-blue-50 text-[#1a365d] flex items-center justify-center shrink-0">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                     </div>
                     <span class="text-xs font-bold text-gray-700">ID Front</span>
@@ -96,10 +96,10 @@
                   </div>
                 </label>
 
-                <label class="file-upload-card" :class="{ 'border-primary-600 bg-primary-50/50': formData.national_id_back_image }">
+                <label class="file-upload-card" :class="{ 'border-[#1a365d] bg-blue-50/50': formData.national_id_back_image }">
                   <input type="file" @change="(e) => (formData.national_id_back_image = e.target.files[0])" hidden accept="image/*" />
                   <div class="flex flex-col items-center gap-1.5 text-center overflow-hidden w-full">
-                    <div class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-blue-50 text-[#1a365d] flex items-center justify-center shrink-0">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                     </div>
                     <span class="text-xs font-bold text-gray-700">ID Back</span>
@@ -113,10 +113,10 @@
           </div>
 
           <div class="pt-2">
-            <button type="submit" :disabled="status === 'loading'" class="w-full btn-global py-3 rounded-xl font-bold text-base shadow-lg shadow-primary-200 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+            <button type="submit" :disabled="status === 'loading'" class="w-full bg-[#1a365d] hover:bg-[#11243f] text-white font-semibold py-3.5 rounded-xl shadow-sm hover:shadow-md hover:shadow-blue-900/10 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed text-base">
               <span v-if="status === 'loading'" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
               <span v-else>Submit Application</span>
-              <svg v-if="status !== 'loading'" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+              <svg v-if="status !== 'loading'" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
             </button>
           </div>
         </form>
@@ -215,6 +215,6 @@ const getFileName = (file, defaultText) => {
 }
 
 .file-upload-card {
-  @apply flex flex-col items-center justify-center border-2 border-dashed border-gray-200 bg-gray-50 rounded-xl py-4 px-3 cursor-pointer transition-all hover:border-primary-400 hover:bg-primary-50/30 active:scale-95;
+  @apply flex flex-col items-center justify-center border-2 border-dashed border-gray-200 bg-gray-50 rounded-xl py-4 px-3 cursor-pointer transition-all hover:border-[#1a365d] hover:bg-blue-50/30 active:scale-95;
 }
 </style>

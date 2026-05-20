@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer base {
+  body {
+    @apply font-sans;
+  }
   body,
   body * {
     -webkit-font-smoothing: antialiased !important;

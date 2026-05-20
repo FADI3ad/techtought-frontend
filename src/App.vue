@@ -5,11 +5,24 @@
     components: {
       Navbar,
     },
+    computed: {
+      showNavbar() {
+        const path = this.$route.path;
+        const name = this.$route.name;
+        return (
+          !(path.startsWith("/admin/") || path === "/admin") &&
+          !(path.startsWith("/instructor/") || path === "/instructor") &&
+          name !== "login" &&
+          name !== "signup" &&
+          name !== "create-course"
+        );
+      },
+    },
   };
 </script>
 
 <template>
-  <Navbar v-if="$route.name !== 'login' && $route.name !== 'signup' && $route.name !== 'create-course'" />
+  <Navbar v-if="showNavbar" />
   <router-view />
 </template>
 

@@ -49,7 +49,7 @@
           Skills to transform your career and
           <span
             class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600">
-            life
+            life!
           </span>
         </h2>
         <p class="text-gray-500 text-lg leading-relaxed max-w-2xl">
@@ -77,7 +77,7 @@
         <div class="w-full lg:w-1/3 flex justify-center">
           <div class="grid grid-cols-2 gap-2">
             <template v-if="category?.image">
-              <div class="col-span-2 h-[400px] rounded-lg overflow-hidden">
+              <div class="col-span-2 h-[500px] rounded-lg overflow-hidden">
                 <img
                   :src="category.image"
                   :alt="category.name"
@@ -99,7 +99,7 @@
       <div class="mt-12 text-center lg:text-left">
         <a
           href="#"
-          class="inline-flex items-center text-[#3b82f6] font-bold hover:underline">
+          class="inline-flex items-center text-[#3182ce] font-bold hover:underline">
           show all courses
           <svg
             class="w-4 h-4 ml-2"

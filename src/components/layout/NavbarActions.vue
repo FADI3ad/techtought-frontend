@@ -1,69 +1,82 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "../../stores/useAuthStore";
-import { useCartStore } from "../../stores/useCartStore";
-import api from "../../services/axios";
+  import { ref, computed, onMounted, onUnmounted } from "vue";
+  import { useRouter, useRoute } from "vue-router";
+  import { useAuthStore } from "../../stores/useAuthStore";
+  import { useCartStore } from "../../stores/useCartStore";
+  import api from "../../services/axios";
 
-const auth = useAuthStore();
-const cart = useCartStore();
-const router = useRouter();
-const route = useRoute();
+  const auth = useAuthStore();
+  const cart = useCartStore();
+  const router = useRouter();
+  const route = useRoute();
 
-const isProfileMenuOpen = ref(false);
-const isGuestMenuOpen = ref(false);
+  const isProfileMenuOpen = ref(false);
+  const isGuestMenuOpen = ref(false);
 
-const isAdmin = computed(() => {
-  const role = auth.user?.role;
-  return role === "admin" || role === "super_admin";
-});
+  const isAdmin = computed(() => {
+    const role = auth.user?.role;
+    return role === "admin" || role === "super_admin";
+  });
 
-const toggleProfileMenu = () => {
-  isProfileMenuOpen.value = !isProfileMenuOpen.value;
-  isGuestMenuOpen.value = false;
-};
-
-const toggleGuestMenu = () => {
-  isGuestMenuOpen.value = !isGuestMenuOpen.value;
-  isProfileMenuOpen.value = false;
-};
-
-const closeDropdown = (e) => {
-  if (!e.target.closest(".profile-dropdown-container"))
-    isProfileMenuOpen.value = false;
-  if (!e.target.closest(".guest-dropdown-container"))
+  const toggleProfileMenu = () => {
+    isProfileMenuOpen.value = !isProfileMenuOpen.value;
     isGuestMenuOpen.value = false;
-};
+  };
 
-onMounted(() => {
-  window.addEventListener("click", closeDropdown);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("click", closeDropdown);
-});
-
-const logout = async () => {
-  try {
-    if (auth.user?.token) await api.post("/logout");
-  } catch (err) {
-    console.error("Logout API error:", err);
-  } finally {
-    auth.logout();
+  const toggleGuestMenu = () => {
+    isGuestMenuOpen.value = !isGuestMenuOpen.value;
     isProfileMenuOpen.value = false;
-    router.push("/");
-  }
-};
+  };
+
+  const closeDropdown = (e) => {
+    if (!e.target.closest(".profile-dropdown-container"))
+      isProfileMenuOpen.value = false;
+    if (!e.target.closest(".guest-dropdown-container"))
+      isGuestMenuOpen.value = false;
+  };
+
+  onMounted(() => {
+    window.addEventListener("click", closeDropdown);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("click", closeDropdown);
+  });
+
+  const logout = async () => {
+    try {
+      if (auth.user?.token) await api.post("/logout");
+    } catch (err) {
+      console.error("Logout API error:", err);
+    } finally {
+      auth.logout();
+      isProfileMenuOpen.value = false;
+      router.push("/");
+    }
+  };
 </script>
 
 <template>
-  <div class="flex items-center gap-3 md:gap-6 text-[15px] font-semibold text-[#444]">
+  <div
+    class="flex items-center gap-3 md:gap-6 text-[15px] font-semibold text-[#444]">
     <template v-if="!auth.isLoggedIn">
       <!-- Desktop Links -->
       <router-link
         to="/contact"
-        class="hidden lg:block hover:text-primary-600 transition-colors">
-        Contact Us
+        class="hidden lg:flex items-center gap-2 hover:text-primary-600 transition-all hover:translate-x-0.5">
+        <span>Contact Us</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="black">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
       </router-link>
       <router-link
         to="/instructor-application"
@@ -77,16 +90,29 @@ const logout = async () => {
           class="btn-global px-4 py-2 md:px-5 md:py-2 text-sm md:text-base">
           Join Us
         </router-link>
-        
+
         <!-- Mobile Guest Menu -->
         <div class="relative guest-dropdown-container lg:hidden">
-          <button @click="toggleGuestMenu" class="p-2 text-gray-600 hover:text-[#1DA1F2] transition-colors focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          <button
+            @click="toggleGuestMenu"
+            class="p-2 text-gray-600 hover:text-[#1DA1F2] transition-colors focus:outline-none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          
-          <div v-if="isGuestMenuOpen" class="absolute right-0 mt-3 w-48 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-[60]">
+
+          <div
+            v-if="isGuestMenuOpen"
+            class="absolute right-0 mt-3 w-48 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-[60]">
             <router-link to="/contact" class="dropdown-item">
               Contact Us
             </router-link>
@@ -109,8 +135,7 @@ const logout = async () => {
       <router-link
         to="/favorites"
         class="relative text-gray-400 hover:text-red-500 transition-colors"
-        :class="{ 'text-red-500': route.name === 'favorites' }"
-      >
+        :class="{ 'text-red-500': route.name === 'favorites' }">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-6 w-6 md:h-7 md:w-7"
@@ -192,10 +217,14 @@ const logout = async () => {
               >Submit Testimonial</router-link
             >
             <!-- Mobile Only Links injected into dropdown -->
-            <router-link to="/my-learning" class="dropdown-item block lg:hidden">
+            <router-link
+              to="/my-learning"
+              class="dropdown-item block lg:hidden">
               My learning
             </router-link>
-            <router-link to="/instructor-application" class="dropdown-item block lg:hidden">
+            <router-link
+              to="/instructor-application"
+              class="dropdown-item block lg:hidden">
               Teach with TechTought
             </router-link>
             <router-link to="/contact" class="dropdown-item block lg:hidden">
@@ -216,8 +245,8 @@ const logout = async () => {
 </template>
 
 <style scoped>
-.dropdown-item {
-  @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100
+  .dropdown-item {
+    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100
        hover:text-primary-600 transition-colors cursor-pointer;
-}
+  }
 </style>

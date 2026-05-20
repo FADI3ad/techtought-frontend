@@ -107,14 +107,14 @@ async function handleAction() {
           <p class="text-xs font-semibold">No Preview Image</p>
         </div>
 
-        <!-- Overlay play effect -->
-        <div class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center cursor-pointer">
-          <div class="w-12 h-12 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#1c1d1f] mb-2">
-            <svg class="w-5 h-5 ml-0.5 fill-current" viewBox="0 0 24 24">
+        <!-- Overlay play effect (Always visible, matching Udemy style in image) -->
+        <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center cursor-pointer transition-colors duration-300 hover:bg-black/50">
+          <div class="w-14 h-14 rounded-full bg-white flex items-center justify-center text-gray-900 mb-3 shadow-xl transition-all duration-300 hover:scale-110">
+            <svg class="w-6 h-6 ml-1 fill-current" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
-          <span class="text-white text-xs font-bold uppercase tracking-wider">Preview this course</span>
+          <span class="text-white text-[13px] font-bold tracking-wide">Preview this course</span>
         </div>
       </div>
 

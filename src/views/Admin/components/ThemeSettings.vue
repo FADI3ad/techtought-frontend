@@ -85,6 +85,19 @@
 
   function applyThemeLocally() {
     const root = document.documentElement;
+
+    // Dynamically load Google Font if not already loaded
+    const fontId = 'dynamic-google-font';
+    let link = document.getElementById(fontId);
+    if (!link) {
+      link = document.createElement('link');
+      link.id = fontId;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    const formattedFont = themeSettings.font_family.replace(/\s+/g, '+');
+    link.href = `https://fonts.googleapis.com/css2?family=${formattedFont}:wght@300;400;500;600;700;800;900&display=swap`;
+
     const rgb = hexToRgb(themeSettings.primary_color);
     const white = [255, 255, 255];
     const black = [0, 0, 0];

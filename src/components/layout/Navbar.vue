@@ -28,7 +28,7 @@ watch(
 </script>
 
 <template>
-  <nav class="w-full bg-white border-b border-gray-200 font-sans top-0 z-50">
+  <nav class="w-full bg-white border-b border-gray-200 font-sans top-0 z-50 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
     <!-- Top Row (Logo, Search (desktop), Actions) -->
     <div class="flex items-center justify-between h-[70px] md:h-[80px] gap-4 md:gap-8 px-4 md:px-12">
       
@@ -39,12 +39,12 @@ watch(
             v-if="settingsStore.settings.logo"
             :src="settingsStore.settings.logo"
             alt="TechTought"
-            class="h-6 md:h-8 object-contain transition-transform" />
+            class="h-10 md:h-10 object-contain transition-transform" />
           <img
             v-else
             src="../../assets/images/Group 13.png"
             alt="TechTought"
-            class="h-6 md:h-8 transition-transform" />
+            class="h-10 md:h-10 transition-transform" />
         </router-link>
       </div>
 

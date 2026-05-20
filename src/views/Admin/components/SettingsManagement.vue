@@ -58,7 +58,7 @@
         formData.append(key, JSON.stringify(settings[key]));
       } else if (['logo', 'favicon'].includes(key)) {
         if (settings[key]) formData.append(key, settings[key]);
-      } else if (!['existingLogo', 'existingFavicon'].includes(key)) {
+      } else if (!['existingLogo', 'existingFavicon', 'theme_settings'].includes(key)) {
         formData.append(key, settings[key]);
       }
     });
