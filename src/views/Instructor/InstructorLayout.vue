@@ -54,6 +54,7 @@
   </div>
 </template>
 
+
 <style>
   .saas-card {
     @apply bg-white border border-gray-200/60 p-6 rounded-[2rem] shadow-sm;
