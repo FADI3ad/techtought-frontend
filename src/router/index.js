@@ -56,6 +56,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/todo-list",
+    name: "todo-list",
+    component: () => import("../views/Student/TodoView.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/category/:slug",
     name: "category",
     component: CategoryCourses,

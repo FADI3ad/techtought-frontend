@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useCartStore } from "../../stores/useCartStore";
 import { useSettingsStore } from "../../stores/useSettingsStore";
@@ -11,6 +12,7 @@ import NavbarCategories from "./NavbarCategories.vue";
 const auth = useAuthStore();
 const cart = useCartStore();
 const settingsStore = useSettingsStore();
+const route = useRoute();
 
 onMounted(() => {
   settingsStore.fetchSettings();
@@ -68,7 +70,7 @@ watch(
 
     
     <!-- Categories Row -->
-    <div class="w-full border-t border-gray-300" v-if="auth.isLoggedIn">
+    <div class="w-full border-t border-gray-300" v-if="auth.isLoggedIn && route.name !== 'todo-list'">
       <NavbarCategories />
     </div>
 

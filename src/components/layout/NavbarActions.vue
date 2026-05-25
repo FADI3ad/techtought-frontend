@@ -207,6 +207,9 @@
             <router-link to="/profile" class="dropdown-item"
               >My Profile</router-link
             >
+            <router-link to="/todo-list" class="dropdown-item"
+              >Todo List</router-link
+            >
             <router-link to="/settings" class="dropdown-item"
               >Settings</router-link
             >
