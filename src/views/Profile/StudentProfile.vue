@@ -189,7 +189,7 @@ onMounted(fetchProfile);
           </div>
 
           <!-- Stats -->
-          <div class="-mt-8 mx-6 bg-white rounded-xl border border-gray-200 shadow-sm p-5 grid grid-cols-2 gap-4 text-center">
+          <div class="mt-4 mx-6 bg-white rounded-xl border border-gray-200 shadow-sm p-5 grid grid-cols-2 gap-4 text-center">
             <div>
               <p class="text-2xl font-black text-primary-700">{{ profile?.enrolled_courses_count ?? 0 }}</p>
               <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Courses</p>
