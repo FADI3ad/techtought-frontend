@@ -3,8 +3,8 @@ import { useAuthStore } from "../stores/useAuthStore";
 
 // 1. Guest Views
 import HomeGuest from "../views/Student/HomeGuest.vue";
-import Login from "../views/Auth/Login.vue";
-import SignUp from "../views/Auth/Signup.vue";
+import Login from "../views/auth/Login.vue";
+import SignUp from "../views/auth/Signup.vue";
 import InstructorApplication from "../views/Student/InstructorApplication.vue";
 
 // 2. Auth/Student Views

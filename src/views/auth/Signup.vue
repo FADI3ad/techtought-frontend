@@ -67,9 +67,17 @@
 
     try {
       const response = await api.post("/register", form.value);
-      authStore.login(response.data.data.user);
+      const user = response.data.data.user;
+      authStore.login(user);
       localStorage.setItem("token", response.data.data.token);
-      router.push("/dashboard");
+      
+      if (user.role === "admin" || user.role === "super_admin") {
+        router.push("/admin/dashboard");
+      } else if (user.role === "instructor") {
+        router.push("/instructor/dashboard");
+      } else {
+        router.push("/home");
+      }
     } catch (error) {
       loading.value = false;
       if (error.response?.status === 422) {
