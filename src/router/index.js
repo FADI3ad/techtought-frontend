@@ -62,6 +62,18 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/profile",
+    name: "profile",
+    component: () => import("../views/Profile/StudentProfile.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/pomodoro",
+    name: "pomodoro",
+    component: () => import("../views/Student/PomodoroTimer.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/category/:slug",
     name: "category",
     component: CategoryCourses,

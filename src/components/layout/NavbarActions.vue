@@ -210,6 +210,9 @@
             <router-link to="/todo-list" class="dropdown-item"
               >Todo List</router-link
             >
+            <router-link to="/pomodoro" class="dropdown-item"
+              >Pomodoro Timer</router-link
+            >
             <router-link to="/settings" class="dropdown-item"
               >Settings</router-link
             >

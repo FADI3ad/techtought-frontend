@@ -70,7 +70,7 @@ watch(
 
     
     <!-- Categories Row -->
-    <div class="w-full border-t border-gray-300" v-if="auth.isLoggedIn && route.name !== 'todo-list'">
+    <div class="w-full border-t border-gray-300" v-if="auth.isLoggedIn && !['todo-list', 'profile', 'pomodoro'].includes(route.name)">
       <NavbarCategories />
     </div>
 
