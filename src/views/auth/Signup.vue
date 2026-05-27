@@ -89,6 +89,17 @@
       }
     }
   };
+
+  const handleSocialLogin = async (provider) => {
+    try {
+      const res = await api.get(`/login/${provider}`);
+      if (res.data.status === "success" && res.data.data.url) {
+        window.location.href = res.data.data.url;
+      }
+    } catch (err) {
+      serverError.value = "Failed to initiate registration with " + provider;
+    }
+  };
 </script>
 
 <template>
@@ -196,6 +207,40 @@
             <span v-if="loading" class="loader"></span>
             {{ loading ? "Creating account..." : "Create account" }}
           </button>
+
+          <!-- Divider -->
+          <div class="oauth-divider">
+            <span class="oauth-line"></span>
+            <span class="oauth-text">Or register with</span>
+            <span class="oauth-line"></span>
+          </div>
+
+          <!-- OAuth Buttons Group -->
+          <div class="oauth-buttons">
+            <button type="button" @click="handleSocialLogin('google')" class="oauth-btn google-btn">
+              <svg class="oauth-icon" viewBox="0 0 24 24" width="18" height="18">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-.14 3.08-3.1 4.09l4.8 3.73c2.8-2.58 4.35-6.39 4.35-10.67z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-4.8-3.73c-1.33.89-3.04 1.43-5.16 1.43-3.97 0-7.35-2.69-8.55-6.31L1.13 16.2c2.4 4.77 7.34 8 13.06 8z"/>
+                <path fill="#FBBC05" d="M3.45 12.48c-.31-.93-.49-1.92-.49-2.94s.18-2.01.49-2.94L1.13 2.8C.41 4.24 0 5.88 0 7.5s.41 3.26 1.13 4.7l2.32-1.72z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.96 1.19 15.24 0 12 0 6.28 0 1.34 3.23.13 8l3.32 2.48c1.2-3.62 4.58-6.31 8.55-6.31z"/>
+              </svg>
+              Google
+            </button>
+
+            <button type="button" @click="handleSocialLogin('github')" class="oauth-btn github-btn">
+              <svg class="oauth-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+              </svg>
+              GitHub
+            </button>
+
+            <button type="button" @click="handleSocialLogin('facebook')" class="oauth-btn facebook-btn">
+              <svg class="oauth-icon" viewBox="0 0 24 24" width="18" height="18" fill="#1877F2">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              Facebook
+            </button>
+          </div>
 
           <div class="terms">
             <p>
@@ -452,6 +497,66 @@
   .fade-enter-from, .fade-leave-to {
     opacity: 0;
     transform: translateY(-10px);
+  }
+
+  /* OAuth Styles */
+  .oauth-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 8px 0;
+  }
+
+  .oauth-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: #d0d7de;
+  }
+
+  .oauth-text {
+    font-size: 11px;
+    color: #57606a;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .oauth-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .oauth-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    background-color: white;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #24292f;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.3, 0, 0, 1);
+  }
+
+  .oauth-btn:hover {
+    background-color: #f6f8fa;
+    border-color: #57606a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .oauth-btn:active {
+    transform: translateY(0);
+  }
+
+  .oauth-icon {
+    flex-shrink: 0;
   }
 
   @media (max-width: 1024px) {

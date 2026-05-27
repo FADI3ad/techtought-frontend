@@ -34,6 +34,12 @@ const routes = [
     meta: { guest: true },
   },
   {
+    path: "/auth/callback/:provider",
+    name: "social-callback",
+    component: () => import("../views/auth/SocialCallback.vue"),
+    meta: { guest: true },
+  },
+  {
     path: "/instructor-application",
     name: "instructor-application",
     component: InstructorApplication,
