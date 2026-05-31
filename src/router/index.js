@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/useAuthStore";
-
+import PrivacyPolicy from "../views/Static/PrivacyPolicy.vue";
+import TermsOfService from "../views/Static/TermsOfService.vue";
+import CookiesSettings from "../views/Static/CookiesSettings.vue";
 // 1. Guest Views
 import HomeGuest from "../views/Student/HomeGuest.vue";
 import Login from "../views/auth/Login.vue";
@@ -52,6 +54,24 @@ const routes = [
     meta: { requiresAuth: false },
   },
 
+    {
+    path: "/privacy-policy",
+    name: "privacy-policy",
+    component: PrivacyPolicy,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/terms-of-service",
+    name: "terms-of-service",
+    component: TermsOfService,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/cookies-settings",
+    name: "cookies-settings",
+    component: CookiesSettings,
+    meta: { requiresAuth: false },
+  },
   // =========================================================================
   // STUDENT / SHARED AUTH ROUTES
   // =========================================================================

@@ -237,15 +237,9 @@
           © 2026 TechTought Inc. All rights reserved.
         </p>
         <div class="flex gap-8">
-          <a href="#" class="text-gray-500 text-xs hover:text-white"
-            >Privacy Policy</a
-          >
-          <a href="#" class="text-gray-500 text-xs hover:text-white"
-            >Terms of Service</a
-          >
-          <a href="#" class="text-gray-500 text-xs hover:text-white"
-            >Cookies Settings</a
-          >
+          <router-link to="/privacy-policy" class="text-gray-500 text-xs hover:text-white">Privacy Policy</router-link>
+          <router-link to="/terms-of-service" class="text-gray-500 text-xs hover:text-white">Terms of Service</router-link>
+          <router-link to="/cookies-settings" class="text-gray-500 text-xs hover:text-white">Cookies Settings</router-link>
         </div>
       </div>
     </div>
